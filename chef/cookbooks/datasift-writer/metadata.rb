@@ -1,0 +1,10 @@
+name             'datasift-writer'
+maintainer       'The Authors'
+maintainer_email 'you@example.com'
+license          'all_rights'
+description      'Installs/Configures datasift-writer'
+long_description 'Installs/Configures datasift-writer'
+version          '0.1.0'
+
+depends 'supervisor', '= 0.4.12'
+depends 'java', '~> 1.31.0'

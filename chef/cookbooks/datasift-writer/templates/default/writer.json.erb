@@ -1,0 +1,25 @@
+{
+  "zookeeper": {
+    "socket": "localhost:2181"
+  },
+  "kafka": {
+    "topic": "twitter-gnip",
+    "broker": "localhost",
+    "port": 6667
+  },
+  "datasift": {
+    "base_url": "<%= node['writer']['url'] %>",
+    "port": 443,
+    "username": "<%= node['writer']['username'] %>",
+    "api_key": "<%= node['writer']['api_key'] %>",
+    "source_id": "<%= node['writer']['source_id'] %>",
+    "bulk_size": 1000,
+    "bulk_interval": 1000
+  },
+  "metrics": {
+    "host": "localhost",
+    "port": 8125,
+    "prefix": "datasift.writer",
+    "reporting-time": 1
+  }
+}

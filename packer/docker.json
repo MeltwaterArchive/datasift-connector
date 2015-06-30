@@ -1,0 +1,32 @@
+{
+    "variables": {
+      "environment": "packer"
+    },
+    "builders": [{
+      "type": "docker",
+      "image": "centos:6.6",
+      "export_path": "datasift_connector_docker_image.tar"
+    }],
+    "provisioners": [{
+      "type": "file",
+      "source": "{{pwd}}/../chef/nodes/datasift-connector.json",
+      "destination": "/tmp/datasift-connector.json"
+    },{
+      "type": "shell",
+      "inline": [
+        "yum -y install sudo",
+        "yum -y install which"
+    ]},{
+      "type": "chef-solo",
+      "execute_command": "{{if .Sudo}}sudo {{end}}chef-solo -E {{user `environment`}} --no-color -c {{.ConfigPath}} -j /tmp/datasift-connector.json",
+      "cookbook_paths": ["{{pwd}}/../chef/vendor/cookbooks"],
+      "environments_path": "{{pwd}}/../chef/environments",
+      "run_list": [
+        "recipe[java]",
+        "recipe[supervisor]",
+        "recipe[datasift-stats]",
+        "recipe[datasift-kafka]",
+        "recipe[datasift-writer]",
+        "recipe[gnip-reader]"
+    ]}]
+}

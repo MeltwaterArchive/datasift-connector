@@ -1,0 +1,42 @@
+---
+driver:
+  name: docker
+  use_sudo: false
+  forward:
+    - 8080:80 # Nginx
+    - 8443:443 # Nginx
+    - 2003 # Graphite
+    - 3000 # Grafana
+    - 8083 # InfluxDB
+    - 8086 # InfluxDB
+    - 8090 # InfluxDB
+    - 8125 # StatsD
+
+provisioner:
+  name: chef_zero
+
+platforms:
+  - name: centos-6.5
+
+suites:
+  - name: default
+
+    run_list:
+      - recipe[java]
+      - recipe[supervisor]
+      - recipe[datasift-stats]
+      - recipe[datasift-kafka]
+      - recipe[webapp]
+      - recipe[datasift-writer]
+      - recipe[gnip-reader]
+    attributes:
+      kafka:
+        ulimit_file: 128000
+        broker:
+          log_dirs: ['/mnt']
+          zookeeper_connect: ['localhost:2181']
+          zookeeper_connection_timeout_ms: 15000
+      packaging:
+        ds_build_gocd: {enabled: true}
+      java:
+        jdk_version: 7

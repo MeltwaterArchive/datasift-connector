@@ -1,0 +1,17 @@
+source 'https://supermarket.chef.io'
+
+cookbook 'java', '~> 1.31.0'
+cookbook 'datasift-stats', path: 'cookbooks/datasift-stats'
+cookbook 'datasift-kafka', path: 'cookbooks/datasift-kafka'
+cookbook 'datasift-writer', path: 'cookbooks/datasift-writer'
+cookbook 'gnip-reader', path: 'cookbooks/gnip-reader'
+cookbook 'webapp', path: 'cookbooks/webapp'
+cookbook 'supervisor',
+         git: 'https://github.com/poise/supervisor.git',
+         branch: 'v0.4.12'
+cookbook 'kafka',
+         git: 'https://github.com/mthssdrbrg/kafka-cookbook.git',
+         branch: 'v0.7.1'
+cookbook 'influxdb',
+         git: 'https://github.com/datasift/chef-influxdb.git',
+         ref: 'c555ef33ba2373a67712153c4fdc0da7bbecb56e'

@@ -1,0 +1,25 @@
+{
+    "kafka": {
+        "topic": "twitter-gnip",
+        "servers": "localhost:6667",
+        "retry-backoff": 1000,
+        "reconnect-backoff": 1000
+    },
+    "gnip": {
+        "account": "ACCOUNT",
+        "label": "LABEL",
+        "product": "PRODUCT",
+        "username": "USER",
+        "password": "PASSWORD",
+        "host": "https://stream.gnip.com",
+        "retries": 10,
+        "buffer_size": 10000,
+        "buffer_timeout": 500
+    },
+    "metrics": {
+        "host": "localhost",
+        "port": 8125,
+        "prefix": "gnip.reader",
+        "reporting-time": 1
+    }
+}

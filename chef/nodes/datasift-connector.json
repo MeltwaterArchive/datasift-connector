@@ -1,0 +1,26 @@
+{
+  "kafka": {
+    "ulimit_file": 128000,
+    "broker": {
+      "log_dirs": [
+        "/mnt"
+      ],
+      "zookeeper_connect": [
+        "localhost:2181"
+      ],
+      "zookeeper_connection_timeout_ms": 15000
+    }
+  },
+  "java": {
+    "jdk_version": 7
+  },
+  "run_list": [
+    "recipe[java]",
+    "recipe[supervisor]",
+    "recipe[datasift-stats]",
+    "recipe[datasift-kafka]",
+    "recipe[datasift-writer]",
+    "recipe[gnip-reader]",
+    "recipe[webapp]"
+  ]
+}

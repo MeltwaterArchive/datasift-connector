@@ -1,0 +1,24 @@
+---
+Style/Encoding:
+  Enabled: false
+
+Style/SingleSpaceBeforeFirstArg:
+  Enabled: false
+
+Style/FileName:
+  Enabled: false
+
+## EmptyLinesAroundBody
+Style/EmptyLinesAroundAccessModifier:
+  Enabled: true
+Style/EmptyLinesAroundMethodBody:
+  Enabled: true
+Style/EmptyLinesAroundBlockBody:
+  Enabled: false
+  EnforcedStyle: empty_lines
+Style/EmptyLinesAroundModuleBody:
+  Enabled: true
+  EnforcedStyle: empty_lines
+Style/EmptyLinesAroundClassBody:
+  Enabled: true
+  EnforcedStyle: empty_lines

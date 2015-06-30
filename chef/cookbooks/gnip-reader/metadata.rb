@@ -1,0 +1,10 @@
+name             'gnip-reader'
+maintainer       'The Authors'
+maintainer_email 'you@example.com'
+license          'all_rights'
+description      'Installs/Configures gnip-reader'
+long_description 'Installs/Configures gnip-reader'
+version          '0.1.0'
+
+depends 'supervisor', '= 0.4.12'
+depends 'java', '~> 1.31.0'

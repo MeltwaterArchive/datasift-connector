@@ -1,0 +1,12 @@
+name             'datasift-stats'
+maintainer       'The Authors'
+maintainer_email 'you@example.com'
+license          'all_rights'
+description      'Installs/Configures datasift-stats'
+long_description 'Installs/Configures datasift-stats'
+version          '0.1.0'
+
+depends          'supervisor'
+depends          'influxdb'
+depends          'git'
+depends          'nodejs'
