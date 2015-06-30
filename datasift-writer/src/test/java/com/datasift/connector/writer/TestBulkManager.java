@@ -183,7 +183,7 @@ public class TestBulkManager {
 
         Exception e = new RuntimeException("uri-syntax");
         Logger log = mock(Logger.class);
-        doThrow(e).when(log).debug(anyString(), anyString());
+        doThrow(e).when(log).trace(anyString(), anyString());
         Metrics metrics = new Metrics();
         Backoff backoff = mock(Backoff.class);
         SimpleConsumerManager consumer = mock(SimpleConsumerManager.class);
@@ -370,7 +370,7 @@ public class TestBulkManager {
 
         Exception e = new RuntimeException("uri-syntax");
         Logger log = mock(Logger.class);
-        doThrow(e).when(log).debug(anyString(), anyString());
+        doThrow(e).when(log).trace(anyString(), anyString());
         Backoff backoff = mock(Backoff.class);
         SimpleConsumerManager consumer = mock(SimpleConsumerManager.class);
         Metrics metrics = new Metrics();
