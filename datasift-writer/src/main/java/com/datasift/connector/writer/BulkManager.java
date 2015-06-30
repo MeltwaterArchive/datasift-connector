@@ -265,7 +265,7 @@ public class BulkManager implements Runnable {
         String authToken = getAuthorizationToken(config);
 
         metrics.sendAttempt.mark();
-        log.debug("Posting to ingestion endpoint {}", data);
+        log.trace("Posting to ingestion endpoint {}", data);
 
         return Request
                     .Post(uri)
