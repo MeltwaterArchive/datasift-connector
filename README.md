@@ -122,21 +122,24 @@ The DataSift Writer configuration file is located at `/etc/datasift/datasift-wri
 
 Example:
 
-```
+```json
 {
-  "datasift": {
-    "base_url": "https://in.datasift.com/",
-    "port": 443,
-    "username": "USERNAME",
-    "api_key": "API_KEY",
-    "source_id": "SOURCE_ID"
-  },
   "zookeeper": {
     "socket": "localhost:2181"
   },
   "kafka": {
     "topic": "twitter-gnip",
-    "servers": "localhost:6667"
+    "broker": "localhost",
+    "port": 9092
+  },
+  "datasift": {
+    "base_url": "https://in.datasift.com/",
+    "port": 443,
+    "username": "username",
+    "api_key": "apikey",
+    "source_id": "sourceid",
+    "bulk-size": 1000,
+    "bulk-interval": 1000
   },
   "metrics": {
     "host": "localhost",

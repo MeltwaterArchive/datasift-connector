@@ -282,7 +282,7 @@ public class SimpleConsumerManager implements ConsumerManager {
         }
 
         if (numRead > 0) {
-            log.info("Consumer has read " + numRead + " messages into local cache");
+            log.debug("Consumer has read " + numRead + " messages into local cache");
 
             ConsumerData item = dataItems.remove();
             lastReturnedOffset = item.getOffset();
