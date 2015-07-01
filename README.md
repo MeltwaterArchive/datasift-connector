@@ -6,19 +6,34 @@ The current implementation only has built-in support for Gnip as a data source, 
 
 ## Quick Start
 
-To run a local copy of the connector do the following:
+Clone the repo:
+
+- `git clone https://github.com/datasift/datasift-connector.git`
+- `cd datasift-connector`
+
+To run a local instance of the connector do the following:
 
 - Ensure [Vagrant](#vagrant) is installed.
-- `git clone git@github.com:datasift/datasift-connector.git`
-- `cd datasift-connector`
 - `vagrant up`
-- `vagant ssh`
+
+To run an instance of the connector on EC2 do the following:
+
+- Ensure [Packer](https://www.packer.io/docs/installation.html) is installed.
+- `cd packer`
+- `./build.sh [AWS_ACCESS_KEY] [AWS_SECRET_KEY]`
+- Once the Packer build has finished log on to your AWS dashboard, select the EC2 service and then click `AMIs`.
+- Launch an instance of the built AMI using the standard EC2 mechanism.
+
+
+After launching an instance do the following to configure it:
+
+- SSH into the instance. eg. `vagrant ssh` or `ssh -i [PEM] root@[EC2-INSTANCE]`
 - `sudo vi /etc/datasift/gnip-reader/reader.json` and add your Gnip credentials.
 - `sudo vi /etc/datasify/datasift-writer/writer.json` and add your DataSift credentials.
 - `sudo supervisorctl restart gnip-reader`
 - `sudo supervisorctl restart datasift-writer`
 - `exit`
-- Browse to `http://localhost:3000`. User `admin`, password `admin`. Click on the dashboard to see relevant metrics.
+- Browse to `http://localhost:3000` (or the launched EC2 machine). User `admin`, password `admin`. Click on the dashboard to see relevant metrics.
 
 You will now be ingesting your Gnip data into DataSift.
 
