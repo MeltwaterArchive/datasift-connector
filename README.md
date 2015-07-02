@@ -13,7 +13,8 @@ Clone the repo:
 
 To run a local instance of the connector do the following:
 
-- Ensure [Vagrant](#vagrant) is installed.
+- Ensure [Vagrant](#vagrant) and relevant plug-ins are installed.
+- Ensure a stable version of [VirtualBox](https://www.virtualbox.org) is installed.
 - `vagrant up`
 
 To run an instance of the connector on EC2 do the following:
