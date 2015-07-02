@@ -30,7 +30,7 @@ After launching an instance do the following to configure it:
 
 - SSH into the instance. eg. `vagrant ssh` or `ssh -i [PEM] root@[EC2-INSTANCE]`
 - `sudo vi /etc/datasift/gnip-reader/reader.json` and add your Gnip credentials.
-- `sudo vi /etc/datasify/datasift-writer/writer.json` and add your DataSift credentials.
+- `sudo vi /etc/datasift/datasift-writer/writer.json` and add your DataSift credentials.
 - `sudo supervisorctl restart gnip-reader`
 - `sudo supervisorctl restart datasift-writer`
 - `exit`
