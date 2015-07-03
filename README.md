@@ -13,7 +13,8 @@ Clone the repo:
 
 To run a local instance of the connector do the following:
 
-- Ensure [Vagrant](#vagrant) is installed.
+- Ensure [Vagrant](#vagrant) and relevant plug-ins are installed.
+- Ensure a stable version of [VirtualBox](https://www.virtualbox.org) is installed.
 - `vagrant up`
 
 To run an instance of the connector on EC2 do the following:
@@ -29,7 +30,7 @@ After launching an instance do the following to configure it:
 
 - SSH into the instance. eg. `vagrant ssh` or `ssh -i [PEM] root@[EC2-INSTANCE]`
 - `sudo vi /etc/datasift/gnip-reader/reader.json` and add your Gnip credentials.
-- `sudo vi /etc/datasify/datasift-writer/writer.json` and add your DataSift credentials.
+- `sudo vi /etc/datasift/datasift-writer/writer.json` and add your DataSift credentials.
 - `sudo supervisorctl restart gnip-reader`
 - `sudo supervisorctl restart datasift-writer`
 - `exit`
