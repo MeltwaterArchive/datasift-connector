@@ -134,7 +134,7 @@ public class TestBackoff {
         b.waitUntil(TimeUnit.MILLISECONDS.toSeconds(now) + 1);
         ArgumentCaptor<Long> arg = ArgumentCaptor.forClass(Long.class);
         verify(sleeper).sleep(arg.capture());
-        assertTrue(arg.getValue() < 1000 && arg.getValue() > 0);
+        assertTrue(arg.getValue() < 2000 && arg.getValue() > 0);
     }
 
     @Test

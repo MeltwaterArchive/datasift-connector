@@ -13,7 +13,8 @@
     "username": "",
     "api_key": "",
     "source_id": "",
-    "bulk-size": 1000,
+    "bulk-size": 100000,
+    "bulk_items": 1000,
     "bulk-interval": 1000
   },
   "metrics": {
