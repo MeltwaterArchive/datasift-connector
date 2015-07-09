@@ -233,7 +233,7 @@ public class BulkManager implements Runnable {
      * @param data the data to post
      * @throws InterruptedException if the waits are interrupted
      */
-    @SuppressWarnings({"checkstyle:designforextension", "checkstyle:magicnumber"})
+    @SuppressWarnings("checkstyle:designforextension")
     protected void send(final String data) throws InterruptedException {
         log.debug("send()");
         HttpResponse response = null;
