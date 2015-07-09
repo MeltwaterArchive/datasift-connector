@@ -111,7 +111,7 @@ public class BulkManager implements Runnable {
         try {
             this.httpClient.close();
         } catch (IOException e) {
-            // TODO can't so anything, so swallow
+            // Can't do anything, so swallow
         }
     }
 
