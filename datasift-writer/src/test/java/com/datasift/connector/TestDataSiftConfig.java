@@ -10,7 +10,8 @@ public class TestDataSiftConfig {
         DataSiftConfig dsc = new DataSiftConfig();
         dsc.apiKey = "KEY";
         dsc.baseURL = "http://a.com";
-        dsc.bulkSize = 2;
+        dsc.bulkSize = 2000;
+        dsc.bulkItems = 2;
         dsc.bulkInterval = 1000;
         dsc.port = 42;
         dsc.sourceID = "SOURCEID";

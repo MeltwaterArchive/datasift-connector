@@ -8,13 +8,14 @@
     "port": 9092
   },
   "datasift": {
-    "base_url": "https://in.stagingdatasift.com/",
+    "base_url": "https://in.datasift.com",
     "port": 443,
     "username": "",
     "api_key": "",
     "source_id": "",
-    "bulk-size": 1000,
-    "bulk-interval": 1000
+    "bulk_size": 100000,
+    "bulk_items": 1000,
+    "bulk_interval": 1000
   },
   "metrics": {
     "host": "localhost",
