@@ -26,6 +26,7 @@ import static org.mockito.Mockito.never;
 public class TestDataSiftWriter {
 
     private final static String CONFIG_VALID = "/src/test/resources/config.json";
+    private final static String CONFIG_EXAMPLE = "/src/main/resources/writer-example.json";
     private final static String CONFIG_NOT_JSON =
             "/src/test/resources/config_not_json.txt";
     private final static String CONFIG_MISSING_ITEM = "/src/test/resources/config_missing_item.json";
@@ -98,6 +99,36 @@ public class TestDataSiftWriter {
         assertEquals(8125, config.metrics.port);
         assertEquals("datasift.writer", config.metrics.prefix);
         assertEquals(1, config.metrics.reportingTime);
+        assertEquals(3, config.datasift.bulkSize);
+        assertEquals(9, config.datasift.bulkItems);
+        assertEquals(12, config.datasift.bulkInterval);
+    }
+
+    @Test public void parsing_example_config_returns_valid_object() {
+        DataSiftWriter dw = mock(DataSiftWriter.class);
+        when(dw.parseConfigFile(anyString())).thenCallRealMethod();
+
+        Logger logger = mock(Logger.class);
+        dw.setLogger(logger);
+        String workingDir = System.getProperty("user.dir");
+        Config config = dw.parseConfigFile(workingDir + CONFIG_EXAMPLE);
+
+        verify(logger, never()).error(anyString());
+        assertEquals("localhost:2181", config.zookeeper.socket);
+        assertEquals("twitter-gnip", config.kafka.topic);
+        assertEquals("localhost", config.kafka.broker);
+        assertEquals("https://in.datasift.com", config.datasift.baseURL);
+        assertEquals((Integer)443, config.datasift.port);
+        assertEquals("", config.datasift.username);
+        assertEquals("", config.datasift.apiKey);
+        assertEquals("", config.datasift.sourceID);
+        assertEquals("localhost", config.metrics.host);
+        assertEquals(8125, config.metrics.port);
+        assertEquals("datasift.writer", config.metrics.prefix);
+        assertEquals(1, config.metrics.reportingTime);
+        assertEquals(100000, config.datasift.bulkSize);
+        assertEquals(1000, config.datasift.bulkItems);
+        assertEquals(1000, config.datasift.bulkInterval);
     }
 
     @Test public void parsing_invalid_json_returns_error() {

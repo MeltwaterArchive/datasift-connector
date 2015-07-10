@@ -42,13 +42,14 @@ public class DataSiftConfig {
     public String sourceID;
 
     /**
-     * The size of the bulk uploads.
+     * The size threshold in bytes of the bulk uploads.
+     * Will send after the threshold is broken by reading an item,
+     * so size sent may be more than this threshold.
      */
     @NotNull
     @SuppressWarnings("checkstyle:magicnumber")
     @JsonProperty("bulk_size")
-    public int bulkSize = 1000;
-
+    public int bulkSize = 150000;
 
     /**
      * The maximum interval at which to post to bulk upload in milliseconds.
@@ -57,4 +58,12 @@ public class DataSiftConfig {
     @SuppressWarnings("checkstyle:magicnumber")
     @JsonProperty("bulk_interval")
     public int bulkInterval = 1000;
+
+    /**
+     * The maximum number of read items from Kafka to post to bulk upload.
+     */
+    @NotNull
+    @SuppressWarnings("checkstyle:magicnumber")
+    @JsonProperty("bulk_items")
+    public int bulkItems = 1000;
 }

@@ -5,14 +5,20 @@ import com.datasift.connector.writer.config.DataSiftConfig;
 import com.google.common.annotations.VisibleForTesting;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.HttpVersion;
+import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Request;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.core.UriBuilder;
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -71,6 +77,11 @@ public class BulkManager implements Runnable {
     private DataSiftConfig config;
 
     /**
+     * The HTTP client.
+     */
+    private CloseableHttpClient httpClient;
+
+    /**
      * Constructor.
      * @param config configuration for DataSift HTTP connection
      * @param simpleConsumerManager the simple consumer manager for Kafka
@@ -85,6 +96,10 @@ public class BulkManager implements Runnable {
         this.simpleConsumerManager = simpleConsumerManager;
         this.backoff = backoff;
         this.metrics = metrics;
+        this.httpClient = HttpClientBuilder
+                            .create()
+                            .disableAutomaticRetries()
+                            .build();
     }
 
     /**
@@ -93,6 +108,11 @@ public class BulkManager implements Runnable {
     public final void shutdown() {
         log.info("Shutting down HTTP bulk upload manager");
         this.running = false;
+        try {
+            this.httpClient.close();
+        } catch (IOException e) {
+            // Can't do anything, so swallow
+        }
     }
 
     /**
@@ -108,26 +128,24 @@ public class BulkManager implements Runnable {
     /**
      * Parses DataSift configuration and sets up connection parameters.
      * @return the URI for the ingestion endpoint
-     * @throws Exception on issues constructing URI from base URL & port
+     * @throws URISyntaxException on issues constructing URI from base URL & port
      */
     @VisibleForTesting
     @SuppressWarnings("checkstyle:designforextension")
-    protected URI getUri() throws Exception {
+    protected URI getUri() throws URISyntaxException {
         String baseURL = config.baseURL;
         if (!baseURL.endsWith("/")) {
             baseURL += "/";
         }
 
         String url = baseURL + config.sourceID;
-        URI uri = UriBuilder
-                .fromUri(url)
-                .port(config.port).build();
+        URI uri = new URIBuilder(url).setPort(config.port).build();
 
         if (uri == null) {
             String msg = "DataSift configuration base URL "
                     + "and/or port syntax invalid";
             log.error(msg);
-            throw new Exception("uri-syntax");
+            throw new URISyntaxException(url, msg, 0);
         }
 
         return uri;
@@ -176,7 +194,8 @@ public class BulkManager implements Runnable {
                 read++;
             }
         } while (System.nanoTime() - start < TimeUnit.MILLISECONDS.toNanos(config.bulkInterval)
-                && ++loop < config.bulkSize);
+                && ++loop < config.bulkItems
+                && buffer.length() < config.bulkSize);
 
         log.debug("Read {} items from Kafka", read);
         metrics.readKafkaItemsFromConsumer.mark();
@@ -216,37 +235,49 @@ public class BulkManager implements Runnable {
      */
     @SuppressWarnings("checkstyle:designforextension")
     protected void send(final String data) throws InterruptedException {
+        log.debug("send()");
+        HttpResponse response = null;
+
         try {
             if (data.equals("")) {
                 return;
             }
 
             final Timer.Context context = metrics.bulkPostTime.time();
-            HttpResponse response = post(data);
+            response = post(data);
             context.stop();
 
             int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode == HttpStatus.SC_OK) {
                 simpleConsumerManager.commit();
-                String body = EntityUtils.toString((response.getEntity()));
+                String body = EntityUtils.toString(response.getEntity());
                 metrics.sendSuccess.mark();
                 backoff.reset();
                 log.trace("Data successfully sent to ingestion endpoint: {}", body);
-                log.debug("Data successfully sent to ingestion endpoint: {}", body.hashCode());
-            } else if (statusCode == HttpStatus.SC_REQUEST_TOO_LONG) {
+                log.debug("Data successfully sent to ingestion endpoint: hash {}", body.hashCode());
+              } else if (statusCode == HttpStatus.SC_REQUEST_TOO_LONG) {
                 long ttl = Long.parseLong(
-                            response
-                             .getFirstHeader("X-Ingestion-Data-RateLimit-Reset-Ttl")
-                             .getValue());
-                log.info("Rate limited, waiting until limits reset at {}", new Date(ttl));
+                            response.getFirstHeader("X-Ingestion-Data-RateLimit-Reset-Ttl").getValue());
+                long ttlms = TimeUnit.SECONDS.toMillis(ttl);
+                EntityUtils.consume(response.getEntity());
+                log.info("Rate limited, waiting until limits reset at {}", new Date(ttlms));
                 metrics.sendRateLimit.mark();
                 backoff.waitUntil(ttl);
             } else if (statusCode >= HttpStatus.SC_BAD_REQUEST) {
+                EntityUtils.consume(response.getEntity());
                 log.error("Error code returned from ingestion endpoint, status = {}", statusCode);
                 metrics.sendError.mark();
                 backoff.exponentialBackoff();
             }
-        } catch (Exception e) {
+        } catch (URISyntaxException | IOException | RuntimeException e) {
+            if (response != null) {
+                try {
+                    EntityUtils.consume(response.getEntity());
+                } catch (IOException e1) {
+                    log.error("Couldn't consume response to close it", e);
+                }
+            }
+
             log.error("Could not connect to ingestion endpoint", e);
             metrics.sendException.mark();
             backoff.linearBackoff();
@@ -257,21 +288,28 @@ public class BulkManager implements Runnable {
      * Post the data to the DataSift Ingestion endpoint.
      * @param data the data to send
      * @return the http response
-     * @throws Exception if the uri is invalid or the request fails
+     * @throws URISyntaxException if the uri is invalid or the request fails
+     * @throws IOException if the http post fails
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public HttpResponse post(final String data) throws Exception {
+    public HttpResponse post(final String data) throws URISyntaxException, IOException {
+        log.debug("post()");
+
         URI uri = getUri();
         String authToken = getAuthorizationToken(config);
 
         metrics.sendAttempt.mark();
         log.trace("Posting to ingestion endpoint {}", data);
+        log.debug("Posting to ingestion endpoint data length {} bytes", data.length());
 
-        return Request
-                    .Post(uri)
-                    .addHeader("Auth", authToken)
-                    .bodyString(data, ContentType.create("application/json"))
-                    .execute()
+        Request request = Request.Post(uri)
+                                 .useExpectContinue()
+                                 .version(HttpVersion.HTTP_1_1)
+                                 .addHeader("Auth", authToken)
+                                 .bodyString(data, ContentType.create("application/json"));
+
+        return Executor.newInstance(httpClient)
+                    .execute(request)
                     .returnResponse();
     }
 }

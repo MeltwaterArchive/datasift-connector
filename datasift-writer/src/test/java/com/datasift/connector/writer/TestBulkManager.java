@@ -4,15 +4,16 @@ import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import com.datasift.connector.writer.config.DataSiftConfig;
-import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.slf4j.Logger;
 
-import javax.xml.crypto.Data;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -74,8 +75,8 @@ public class TestBulkManager {
 
         BulkManager bm = new BulkManager(config, null, null, metrics);
         try {
-            org.apache.http.HttpResponse response = bm.post("{}");
-            String body = EntityUtils.toString((response.getEntity()));
+            HttpResponse response = bm.post("{}");
+            String body = EntityUtils.toString(response.getEntity());
             assertEquals("{\"accepted\":1,\"total_message_bytes\":2}", body);
         } catch (Exception e) {
             e.printStackTrace();
@@ -139,7 +140,9 @@ public class TestBulkManager {
         bm.send("{}");
 
         verify(backoff).waitUntil(1000);
-        verify(log).info("Rate limited, waiting until limits reset at {}", new Date(1000));
+        ArgumentCaptor<Date> arg = ArgumentCaptor.forClass(Date.class);
+        verify(log).info(eq("Rate limited, waiting until limits reset at {}"), arg.capture());
+        assertTrue(arg.getValue().getTime() > 1000);
     }
 
     @Test
@@ -173,17 +176,15 @@ public class TestBulkManager {
     }
 
     @Test
-    public void send_should_backof_linearly_on_exception() throws InterruptedException {
+    public void send_should_backoff_linearly_on_exception() throws InterruptedException {
         DataSiftConfig config = new DataSiftConfig();
-        config.baseURL = "http://localhost/";
+        config.baseURL = "INVALID";
         config.sourceID = "SOURCEID";
         config.port = 18089;
         config.username = "USER";
         config.apiKey = "APIKEY";
 
-        Exception e = new RuntimeException("uri-syntax");
         Logger log = mock(Logger.class);
-        doThrow(e).when(log).trace(anyString(), anyString());
         Metrics metrics = new Metrics();
         Backoff backoff = mock(Backoff.class);
         SimpleConsumerManager consumer = mock(SimpleConsumerManager.class);
@@ -192,7 +193,7 @@ public class TestBulkManager {
         bm.send("{}");
 
         verify(backoff).linearBackoff();
-        verify(log).error("Could not connect to ingestion endpoint", e);
+        verify(log).error(eq("Could not connect to ingestion endpoint"), any(Exception.class));
     }
 
     @Test
@@ -249,6 +250,7 @@ public class TestBulkManager {
         config.username = "USER";
         config.apiKey = "APIKEY";
 
+        SimpleConsumerManager consumer = mock(SimpleConsumerManager.class);
         Meter meter = mock(Meter.class);
         Timer.Context context = mock(Timer.Context.class);
         Timer timer = mock(Timer.class);
@@ -258,7 +260,7 @@ public class TestBulkManager {
         when(registry.meter(anyString())).thenReturn(meter);
         Metrics metrics = new Metrics(registry);
         Logger log = mock(Logger.class);
-        BulkManager bm = new BulkManager(config, null, backoff, metrics);
+        BulkManager bm = new BulkManager(config, consumer, backoff, metrics);
         bm.setLogger(log);
 
         bm.send("{}");
@@ -368,14 +370,12 @@ public class TestBulkManager {
                         .withHeader("X-Ingestion-Data-RateLimit-Reset-Ttl", "1000")
                         .withBody("{\"accepted\":1,\"total_message_bytes\":2}")));
 
-        Exception e = new RuntimeException("uri-syntax");
         Logger log = mock(Logger.class);
-        doThrow(e).when(log).trace(anyString(), anyString());
         Backoff backoff = mock(Backoff.class);
         SimpleConsumerManager consumer = mock(SimpleConsumerManager.class);
         Metrics metrics = new Metrics();
         DataSiftConfig config = new DataSiftConfig();
-        config.baseURL = "http://localhost/";
+        config.baseURL = "INVALID";
         config.sourceID = "SOURCEID";
         config.port = 18089;
         config.username = "USER";
@@ -465,6 +465,7 @@ public class TestBulkManager {
         Logger log = mock(Logger.class);
         DataSiftConfig config = new DataSiftConfig();
         config.bulkInterval = 1000;
+        config.bulkItems = 999999999;
         config.bulkSize = 999999999;
 
         BulkManager bm = new BulkManager(config, scm, null, metrics);
@@ -479,6 +480,29 @@ public class TestBulkManager {
     }
 
     @Test
+    public void read_should_read_for_configured_items() {
+        SimpleConsumerManager scm = mock(SimpleConsumerManager.class);
+        ConsumerData cd = mock(ConsumerData.class);
+        when(cd.getMessage()).thenReturn("ONE").thenReturn("TWO");
+        when(scm.readItem()).thenReturn(cd).thenReturn(cd).thenReturn(null);
+        Logger log = mock(Logger.class);
+        Metrics metrics = new Metrics();
+        DataSiftConfig config = new DataSiftConfig();
+        config.bulkInterval = 999999999;
+        config.bulkSize = 99999999;
+        config.bulkItems = 2;
+
+        BulkManager bm = new BulkManager(config, scm, null, metrics);
+        bm.setLogger(log);
+
+        String data = bm.read();
+
+        assertEquals("ONE\r\nTWO", data);
+        assertEquals(1, metrics.readKafkaItemsFromConsumer.getCount());
+        assertEquals(2, metrics.readKafkaItemFromConsumer.getCount());
+    }
+
+    @Test
     public void read_should_read_for_configured_size() {
         SimpleConsumerManager scm = mock(SimpleConsumerManager.class);
         ConsumerData cd = mock(ConsumerData.class);
@@ -488,7 +512,8 @@ public class TestBulkManager {
         Metrics metrics = new Metrics();
         DataSiftConfig config = new DataSiftConfig();
         config.bulkInterval = 999999999;
-        config.bulkSize = 2;
+        config.bulkSize = 4;
+        config.bulkItems = 99999999;
 
         BulkManager bm = new BulkManager(config, scm, null, metrics);
         bm.setLogger(log);
@@ -510,7 +535,7 @@ public class TestBulkManager {
         Metrics metrics = new Metrics();
         DataSiftConfig config = new DataSiftConfig();
         config.bulkInterval = 999999999;
-        config.bulkSize = 3;
+        config.bulkItems = 3;
 
         BulkManager bm = new BulkManager(config, scm, null, metrics);
         bm.setLogger(log);
@@ -522,7 +547,7 @@ public class TestBulkManager {
 
     @Ignore("Integration test for debugging")
     @Test
-    public void run_should_read_from_kafka_and_post_to_endpoint() {
+    public void run_should_read_from_kafka_and_post_to_endpoint() throws IOException {
         // TODO allow isRunning to be changed in test
         stubFor(post(urlEqualTo("/SOURCEID"))
                 .willReturn(aResponse()
@@ -537,17 +562,22 @@ public class TestBulkManager {
         Backoff backoff = new Backoff(sleeper, log, metrics);
         DataSiftConfig config = new DataSiftConfig();
         config.bulkInterval = 1000;
-        config.bulkSize = 10000;
+        config.bulkSize = 150000;
+        config.bulkItems = 10000;
         config.baseURL = "http://localhost/";
         config.sourceID = "SOURCEID";
-        config.port = 18089;
-        config.username = "USER";
+        config.port = 443;
+        config.username = "USERID";
         config.apiKey = "APIKEY";
 
-        ConsumerData cd = new ConsumerData(1, "{\"a\":\"1\"}");
+        String data = "{\"a\":\"b\"}";
+        ConsumerData cd = new ConsumerData(1, data);
         SimpleConsumerManager scm = mock(SimpleConsumerManager.class);
         when(scm.readItem()).thenReturn(cd);
         BulkManager bm = new BulkManager(config, scm, backoff, metrics);
         bm.run();
+
+        // Don't want to ever have this test running, it's for debugging
+        assertTrue(false);
     }
 }

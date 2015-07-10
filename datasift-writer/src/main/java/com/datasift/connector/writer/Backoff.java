@@ -180,16 +180,17 @@ public class Backoff {
         sleeper.sleep(exponentialWaitFor);
     }
 
-     /**
-     * Wait until the TTL has been reached.
-     * @param waitUntil the timestamp in seconds of the next reset
-     * @throws InterruptedException throw if sleep interrupted
-     */
-     @SuppressWarnings("checkstyle:designforextension")
+    /**
+    * Wait until the TTL has been reached.
+    * @param waitUntil the timestamp in seconds of the next reset
+    * @throws InterruptedException throw if sleep interrupted
+    */
+    @SuppressWarnings("checkstyle:designforextension")
     public void waitUntil(final long waitUntil) throws InterruptedException {
          this.currentType = BackoffType.WAIT_UNTIL;
          long waitFor = TimeUnit.SECONDS.toMillis(waitUntil) - System.currentTimeMillis();
          if (waitFor > 0) {
+             waitFor += TimeUnit.SECONDS.toMillis(1); // Wait until the next second after ttl
              log.info("Waiting for {} ms", waitFor);
              sleeper.sleep(waitFor);
          }
@@ -198,7 +199,8 @@ public class Backoff {
     /**
      * Resets the backoff time.
      */
-    public final void reset() {
+    @SuppressWarnings("checkstyle:designforextension")
+    public void reset() {
         log.debug("Reset backoff time");
         exponentialWaitFor = EXPONENTIAL_BACKOFF / 2;
         linearWaitFor = 0;

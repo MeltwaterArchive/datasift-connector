@@ -13,8 +13,9 @@
     "username": "user",
     "api_key": "584b068700b0385493686a8d3f95696ac",
     "source_id": "a981db85e4bd452e80b4ccfc508e0c63",
-    "bulk_size": 1,
-    "bulk_interval": 1000
+    "bulk_size": 3,
+    "bulk_items": 9,
+    "bulk_interval": 12
   },
   "metrics": {
     "host": "localhost",
