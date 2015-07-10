@@ -138,8 +138,9 @@ Example:
     "username": "username",
     "api_key": "apikey",
     "source_id": "sourceid",
-    "bulk-size": 1000,
-    "bulk-interval": 1000
+    "bulk_size": 100000,
+    "bulk_items": 1000,
+    "bulk_interval": 1000
   },
   "metrics": {
     "host": "localhost",
