@@ -29,6 +29,7 @@
 
     <modules>
         <module>gnip-reader</module>
+        <module>twitterapi-reader</module>
         <module>datasift-writer</module>
     </modules>
 
