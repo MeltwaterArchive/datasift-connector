@@ -108,7 +108,7 @@ public class TestBulkManager {
 
         BulkManager bm = new BulkManager(config, consumer, backoff, metrics);
         bm.setLogger(log);
-        bm.send("{}");
+        bm.send(new BulkReadValues(0, "{}"));
 
         verify(log).debug("Reset backoff time");
     }
@@ -137,7 +137,7 @@ public class TestBulkManager {
 
         BulkManager bm = new BulkManager(config, consumer, backoff, metrics);
         bm.setLogger(log);
-        bm.send("{}");
+        bm.send(new BulkReadValues(0, "{}"));
 
         verify(backoff).waitUntil(1000);
         ArgumentCaptor<Date> arg = ArgumentCaptor.forClass(Date.class);
@@ -169,7 +169,7 @@ public class TestBulkManager {
 
         BulkManager bm = new BulkManager(config, consumer, backoff, metrics);
         bm.setLogger(log);
-        bm.send("{}");
+        bm.send(new BulkReadValues(0, "{}"));
 
         verify(backoff).exponentialBackoff();
         verify(log).error("Error code returned from ingestion endpoint, status = {}", 503);
@@ -190,7 +190,7 @@ public class TestBulkManager {
         SimpleConsumerManager consumer = mock(SimpleConsumerManager.class);
         BulkManager bm = new BulkManager(config, consumer, backoff, metrics);
         bm.setLogger(log);
-        bm.send("{}");
+        bm.send(new BulkReadValues(0, "{}"));
 
         verify(backoff).linearBackoff();
         verify(log).error(eq("Could not connect to ingestion endpoint"), any(Exception.class));
@@ -199,7 +199,7 @@ public class TestBulkManager {
     @Test
     public void should_not_send_if_buffer_empty() throws Exception {
         BulkManager bm = new BulkManager(null, null, null, null);
-        bm.send(new StringBuilder().toString());
+        bm.send(new BulkReadValues(0, new StringBuilder().toString()));
         // Will throw a NullPointerException if allowed to carry on
     }
 
@@ -263,13 +263,13 @@ public class TestBulkManager {
         BulkManager bm = new BulkManager(config, consumer, backoff, metrics);
         bm.setLogger(log);
 
-        bm.send("{}");
+        bm.send(new BulkReadValues(0, "{}"));
 
         verify(context).stop();
     }
 
     @Test
-    public void should_mark_sent_success_on_200() throws Exception {
+    public void should_mark_success_metrics_on_200() throws Exception {
         Thread.sleep(1000); // Give WireMock time
         stubFor(post(urlEqualTo("/SOURCEID"))
                 .willReturn(aResponse()
@@ -294,9 +294,10 @@ public class TestBulkManager {
         Backoff backoff = mock(Backoff.class);
         BulkManager bm = new BulkManager(config, consumer, backoff, metrics);
 
-        bm.send("{}");
+        bm.send(new BulkReadValues(3, "{}"));
 
         assertEquals(1, metrics.sendSuccess.getCount());
+        assertEquals(3, metrics.sentItems.getCount());
     }
 
     @Test
@@ -325,7 +326,7 @@ public class TestBulkManager {
         BulkManager bm = new BulkManager(config, consumer, backoff, metrics);
         bm.setLogger(log);
 
-        bm.send("{}");
+        bm.send(new BulkReadValues(0, "{}"));
 
         assertEquals(1, metrics.sendError.getCount());
     }
@@ -355,7 +356,7 @@ public class TestBulkManager {
         Metrics metrics = new Metrics();
         BulkManager bm = new BulkManager(config, consumer, backoff, metrics);
 
-        bm.send("{}");
+        bm.send(new BulkReadValues(0, "{}"));
 
         assertEquals(1, metrics.sendRateLimit.getCount());
     }
@@ -383,7 +384,7 @@ public class TestBulkManager {
         BulkManager bm = new BulkManager(config, consumer, backoff, metrics);
         bm.setLogger(log);
 
-        bm.send("{}");
+        bm.send(new BulkReadValues(0, "{}"));
 
         assertEquals(1, metrics.sendException.getCount());
     }
@@ -472,7 +473,7 @@ public class TestBulkManager {
         bm.setLogger(log);
 
         long before = System.nanoTime();
-        String data = bm.read();
+        String data = bm.read().getData();
         long after = System.nanoTime();
 
         assertTrue(after - before >= TimeUnit.MILLISECONDS.toNanos(config.bulkInterval));
@@ -495,7 +496,7 @@ public class TestBulkManager {
         BulkManager bm = new BulkManager(config, scm, null, metrics);
         bm.setLogger(log);
 
-        String data = bm.read();
+        String data = bm.read().getData();
 
         assertEquals("ONE\r\nTWO", data);
         assertEquals(1, metrics.readKafkaItemsFromConsumer.getCount());
@@ -518,7 +519,7 @@ public class TestBulkManager {
         BulkManager bm = new BulkManager(config, scm, null, metrics);
         bm.setLogger(log);
 
-        String data = bm.read();
+        String data = bm.read().getData();
 
         assertEquals("ONE\r\nTWO", data);
         assertEquals(1, metrics.readKafkaItemsFromConsumer.getCount());
