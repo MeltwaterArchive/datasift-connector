@@ -345,7 +345,7 @@ public class DataSiftWriter {
         msg += "Total Kafka items read: "
                 + metrics.readKafkaItem.getCount() + ". ";
         msg += "Total items sent to endpoint: "
-                + metrics.sendSuccess.getCount() + ".";
+                + metrics.sentItems.getCount() + ".";
 
         log.info(msg);
     }
