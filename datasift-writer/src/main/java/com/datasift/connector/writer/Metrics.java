@@ -37,6 +37,7 @@ public class Metrics {
                 registry.meter("http-connection-closed");
         this.sendAttempt = registry.meter("sent-attempt");
         this.sendSuccess = registry.meter("send-success");
+        this.sentItems = registry.meter("sent-items");
         this.sendError = registry.meter("send-error");
         this.sendRateLimit = registry.meter("send-rate-limit");
         this.sendException = registry.meter("send-exception");
@@ -97,9 +98,14 @@ public class Metrics {
     public Meter sendAttempt;
 
     /**
-     * The meter for measuring items successfully sent to the HTTP endpoint.
+     * The meter for measuring successful posts sent the HTTP endpoint.
      */
     public Meter sendSuccess;
+
+    /**
+     * The meter for measuring items successfully sent to the HTTP endpoint.
+     */
+    public Meter sentItems;
 
     /**
      * The meter for measuring errors sending to the HTTP endpoint.

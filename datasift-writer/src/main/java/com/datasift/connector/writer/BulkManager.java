@@ -167,8 +167,8 @@ public class BulkManager implements Runnable {
     public final void run() {
         while (isRunning()) {
             try {
-                String data = read();
-                send(data);
+                BulkReadValues readValues = read();
+                send(readValues);
             } catch (InterruptedException e) {
                 log.error("Run loop interrupted ", e);
             }
@@ -183,7 +183,7 @@ public class BulkManager implements Runnable {
      */
     @VisibleForTesting
     @SuppressWarnings("checkstyle:designforextension")
-    protected String read() {
+    protected BulkReadValues read() {
         final long start = System.nanoTime();
         StringBuilder buffer = new StringBuilder();
         int loop = 0;
@@ -200,7 +200,7 @@ public class BulkManager implements Runnable {
         log.debug("Read {} items from Kafka", read);
         metrics.readKafkaItemsFromConsumer.mark();
 
-        return buffer.toString();
+        return new BulkReadValues(read, buffer.toString());
     }
 
     /**
@@ -230,21 +230,21 @@ public class BulkManager implements Runnable {
     /**
      * Reads from Kafka and sends to the DataSift ingestion endpoint.
      * Deals with back-offs if unsuccessful.
-     * @param data the data to post
+     * @param readValues the data to post
      * @throws InterruptedException if the waits are interrupted
      */
     @SuppressWarnings("checkstyle:designforextension")
-    protected void send(final String data) throws InterruptedException {
+    protected void send(final BulkReadValues readValues) throws InterruptedException {
         log.debug("send()");
         HttpResponse response = null;
 
         try {
-            if (data.equals("")) {
+            if (readValues.getData().equals("")) {
                 return;
             }
 
             final Timer.Context context = metrics.bulkPostTime.time();
-            response = post(data);
+            response = post(readValues.getData());
             context.stop();
 
             int statusCode = response.getStatusLine().getStatusCode();
@@ -252,6 +252,7 @@ public class BulkManager implements Runnable {
                 simpleConsumerManager.commit();
                 String body = EntityUtils.toString(response.getEntity());
                 metrics.sendSuccess.mark();
+                metrics.sentItems.mark(readValues.getItemsRead());
                 backoff.reset();
                 log.trace("Data successfully sent to ingestion endpoint: {}", body);
                 log.debug("Data successfully sent to ingestion endpoint: hash {}", body.hashCode());
