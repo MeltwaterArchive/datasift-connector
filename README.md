@@ -10,6 +10,7 @@ Clone the repo:
 
 - `git clone https://github.com/datasift/datasift-connector.git`
 - `cd datasift-connector`
+- `git checkout tags/x.y.z-1` where x.y.z is the tag of the [release](https://github.com/datasift/datasift-connector/releases) required.
 
 To run a local instance of the connector do the following:
 
