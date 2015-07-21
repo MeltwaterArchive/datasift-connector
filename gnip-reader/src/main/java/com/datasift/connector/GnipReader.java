@@ -1,11 +1,13 @@
 package com.datasift.connector;
 
-import com.datasift.connector.reader.config.HosebirdConfig;
+import com.datasift.connector.reader.config.Config;
+import com.datasift.connector.reader.config.GnipReaderConfig;
 import com.datasift.connector.reader.config.GnipConfig;
 import com.twitter.hbc.core.Client;
 import com.twitter.hbc.core.endpoint.RealTimeEnterpriseStreamingEndpoint;
 import com.twitter.hbc.core.processor.LineStringProcessor;
 import com.twitter.hbc.httpclient.auth.BasicAuth;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.LinkedBlockingQueue;
@@ -16,11 +18,29 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class GnipReader extends HosebirdReader {
 
     /**
+     * Creates the logger.
+     * @return the created logger
+     */
+    @Override
+    protected final Logger createLogger() {
+        return LoggerFactory.getLogger(GnipReader.class);
+    }
+
+    /**
      * The constructor.
      */
     public GnipReader() {
         super();
-        this.setLogger(LoggerFactory.getLogger(GnipReader.class));
+    }
+
+    /**
+     * Gets the class for the config.
+     * @return the config class
+     */
+    @SuppressWarnings("checkstyle:designforextension")
+    @Override
+    protected Class getConfigClass() {
+        return GnipReaderConfig.class;
     }
 
     /**
@@ -35,17 +55,18 @@ public class GnipReader extends HosebirdReader {
     /**
      * Gets the Gnip client.
      * @param buffer the queue which the client reads into
-     * @param hbcConfig the Gnip configuration
+     * @param readerConfig the Gnip Reader configuration
      * @return the built Gnip client
      */
     @SuppressWarnings("checkstyle:designforextension")
+    @Override
     protected Client getHosebirdClient(
-            final LinkedBlockingQueue<String> buffer,
-            final HosebirdConfig hbcConfig) {
+              final LinkedBlockingQueue<String> buffer,
+              final Config readerConfig) {
 
-        log.info("Building Gnip client");
+        getLogger().info("Building Gnip client");
 
-        GnipConfig config = (GnipConfig) hbcConfig;
+        GnipConfig config = ((GnipReaderConfig) readerConfig).gnip;
 
         RealTimeEnterpriseStreamingEndpoint endpoint =
                 new RealTimeEnterpriseStreamingEndpoint(

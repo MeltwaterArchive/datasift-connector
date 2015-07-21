@@ -4,7 +4,6 @@ import com.datasift.connector.reader.Messages;
 import com.datasift.connector.reader.Metrics;
 import com.datasift.connector.reader.ReadAndSendPredicate;
 import com.datasift.connector.reader.config.Config;
-import com.datasift.connector.reader.config.HosebirdConfig;
 import com.datasift.connector.reader.config.KafkaConfig;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -22,7 +21,6 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -47,7 +45,15 @@ public abstract class HosebirdReader {
     /**
      * The logger to send messages to.
      */
-    protected  Logger log;
+    private Logger log;
+
+    /**
+     * Gets the logger.
+     * @return the logger
+     */
+    protected final Logger getLogger() {
+        return this.log;
+    }
 
     /**
      * Whether the reader should retry if the Hosebird client exits.
@@ -85,9 +91,18 @@ public abstract class HosebirdReader {
     }
 
     /**
+     * Create the logger.
+     * @return the created Logger
+     */
+    @VisibleForTesting
+    protected abstract Logger createLogger();
+
+    /**
      * The constructor.
      */
-    public HosebirdReader() { }
+    public HosebirdReader() {
+        this.setLogger(this.createLogger());
+    }
 
     /**
      * Connects to Hosebird then loops until the client says it is done, reading
@@ -113,11 +128,11 @@ public abstract class HosebirdReader {
 
         // Create the Hosebird client and buffer queue
         LinkedBlockingQueue<String> buffer =
-                getBufferQueue(config.gnip.bufferSize);
+                getBufferQueue(config.hosebird.bufferSize);
 
         final Client client = getHosebirdClient(
                 buffer,
-                config.gnip);
+                config);
 
         // Initialise the metrics
         this.metrics = getMetrics(client.getStatsTracker());
@@ -229,7 +244,7 @@ public abstract class HosebirdReader {
 
     /**
      * Returns a DataSift Writer configuration object parsed from JSON file.
-     * @param jsonFile String filepath of the JSON file to parse
+     * @param jsonFile String file path of the JSON file to parse
      * @return a Config object representing JSON data provided
      */
     @VisibleForTesting
@@ -240,7 +255,8 @@ public abstract class HosebirdReader {
 
         try {
             ObjectMapper mapper = new ObjectMapper();
-            Config config =  mapper.readValue(new File(jsonFile), Config.class);
+            mapper.enableDefaultTyping();
+            Config config =  (Config) mapper.readValue(new File(jsonFile), getConfigClass());
             Set<ConstraintViolation<Config>> problems =
                     Validation.buildDefaultValidatorFactory()
                               .getValidator()
@@ -269,6 +285,12 @@ public abstract class HosebirdReader {
 
         return null;
     }
+
+    /**
+     * Get the class of the concrete config object.
+     * @return the config object class
+     */
+    protected abstract Class getConfigClass();
 
     /**
      * Reads the data from the buffer queue and sends it to Kafka.
@@ -358,7 +380,7 @@ public abstract class HosebirdReader {
     @SuppressWarnings("checkstyle:designforextension")
     protected abstract Client getHosebirdClient(
             final LinkedBlockingQueue<String> buffer,
-            final HosebirdConfig config);
+            final Config config);
 
     /**
      * Create the Kafka producer.
