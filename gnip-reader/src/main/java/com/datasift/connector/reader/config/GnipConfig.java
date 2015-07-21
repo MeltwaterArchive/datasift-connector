@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
  * The container for the Gnip configuration.
  */
 @SuppressWarnings("checkstyle:visibilitymodifier")
-public class GnipConfig {
+public class GnipConfig extends HosebirdConfig {
 
     /**
      * The Gnip account id.

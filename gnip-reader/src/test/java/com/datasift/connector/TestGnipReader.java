@@ -122,7 +122,7 @@ public class TestGnipReader {
         Metrics metrics = mock(Metrics.class);
         when(tr.getMetrics(any(StatsReporter.StatsTracker.class))).thenReturn(metrics);
         Client client = mock(Client.class);
-        when(tr.getGnipClient(any(LinkedBlockingQueue.class), any(GnipConfig.class))).thenReturn(client);
+        when(tr.getHosebirdClient(any(LinkedBlockingQueue.class), any(GnipConfig.class))).thenReturn(client);
         tr.setLogger(this.logger);
         StatsReporter stats = new StatsReporter();
         tr.metrics = new Metrics(stats.getStatsTracker());
@@ -140,7 +140,7 @@ public class TestGnipReader {
         reset(this.logger);
         tr.setLogger(this.logger);
         when(tr.getMetrics(any(StatsReporter.StatsTracker.class))).thenCallRealMethod();
-        when(tr.getGnipClient(any(LinkedBlockingQueue.class), any(GnipConfig.class))).thenCallRealMethod();
+        when(tr.getHosebirdClient(any(LinkedBlockingQueue.class), any(GnipConfig.class))).thenCallRealMethod();
         when(tr.getKafkaProducer(any(KafkaConfig.class))).thenReturn(producer);
         when(tr.getClientBuilder()).thenReturn(this.cb);
         when(tr.parseConfigFile(anyString())).thenReturn(config);
@@ -184,7 +184,7 @@ public class TestGnipReader {
         reset(this.logger);
         tr.setLogger(this.logger);
         when(tr.getMetrics(any(StatsReporter.StatsTracker.class))).thenCallRealMethod();
-        when(tr.getGnipClient(any(LinkedBlockingQueue.class), any(GnipConfig.class))).thenCallRealMethod();
+        when(tr.getHosebirdClient(any(LinkedBlockingQueue.class), any(GnipConfig.class))).thenCallRealMethod();
         when(tr.getKafkaProducer(any(KafkaConfig.class))).thenReturn(producer);
         when(tr.getClientBuilder()).thenReturn(this.cb);
         doCallRealMethod().when(tr).readAndSend(any(LinkedBlockingQueue.class), anyString(), any(Producer.class), any(ReadAndSendPredicate.class));
@@ -211,7 +211,7 @@ public class TestGnipReader {
         reset(this.logger);
         tr.setLogger(this.logger);
         when(tr.getMetrics(any(StatsReporter.StatsTracker.class))).thenCallRealMethod();
-        when(tr.getGnipClient(any(LinkedBlockingQueue.class), any(GnipConfig.class))).thenCallRealMethod();
+        when(tr.getHosebirdClient(any(LinkedBlockingQueue.class), any(GnipConfig.class))).thenCallRealMethod();
         when(tr.getKafkaProducer(any(KafkaConfig.class))).thenReturn(producer);
         when(tr.getClientBuilder()).thenReturn(this.cb);
         doCallRealMethod().when(tr).readAndSend(any(LinkedBlockingQueue.class), anyString(), any(Producer.class), any(ReadAndSendPredicate.class));
@@ -248,7 +248,7 @@ public class TestGnipReader {
 
         GnipReader tr = mock(GnipReader.class);
         tr.setLogger(this.logger);
-        when(tr.getGnipClient(any(LinkedBlockingQueue.class), any(GnipConfig.class))).thenCallRealMethod();
+        when(tr.getHosebirdClient(any(LinkedBlockingQueue.class), any(GnipConfig.class))).thenCallRealMethod();
 
         when(tr.getMetrics(any(StatsReporter.StatsTracker.class))).thenCallRealMethod();
         when(tr.getKafkaProducer(any(KafkaConfig.class))).thenReturn(producer);
@@ -280,7 +280,7 @@ public class TestGnipReader {
         GnipReader tr = mock(GnipReader.class);
         tr.setLogger(this.logger);
         when(tr.getMetrics(any(StatsReporter.StatsTracker.class))).thenCallRealMethod();
-        when(tr.getGnipClient(any(LinkedBlockingQueue.class), any(GnipConfig.class))).thenCallRealMethod();
+        when(tr.getHosebirdClient(any(LinkedBlockingQueue.class), any(GnipConfig.class))).thenCallRealMethod();
         when(tr.getKafkaProducer(any(KafkaConfig.class))).thenReturn(producer);
         when(tr.getClientBuilder()).thenReturn(this.cb);
         doCallRealMethod().when(tr).readAndSend(any(LinkedBlockingQueue.class), anyString(), any(Producer.class), any(ReadAndSendPredicate.class));
@@ -310,7 +310,7 @@ public class TestGnipReader {
             GnipReader tr = mock(GnipReader.class);
             tr.setLogger(this.logger);
             when(tr.getMetrics(any(StatsReporter.StatsTracker.class))).thenCallRealMethod();
-            when(tr.getGnipClient(any(LinkedBlockingQueue.class), any(GnipConfig.class))).thenCallRealMethod();
+            when(tr.getHosebirdClient(any(LinkedBlockingQueue.class), any(GnipConfig.class))).thenCallRealMethod();
             when(tr.getKafkaProducer(any(KafkaConfig.class))).thenReturn(producer);
             when(tr.getClientBuilder()).thenReturn(this.cb);
             doCallRealMethod().when(tr).readAndSend(any(LinkedBlockingQueue.class), anyString(), any(Producer.class), any(ReadAndSendPredicate.class));
@@ -339,7 +339,7 @@ public class TestGnipReader {
         when(tr.getMetrics(any(StatsReporter.StatsTracker.class))).thenCallRealMethod();
         when(tr.parseConfigFile(anyString())).thenReturn(config);
         Client client = mock(Client.class);
-        when(tr.getGnipClient(any(LinkedBlockingQueue.class), any(GnipConfig.class))).thenReturn(client);
+        when(tr.getHosebirdClient(any(LinkedBlockingQueue.class), any(GnipConfig.class))).thenReturn(client);
         Producer<String, String> producer = mock(Producer.class);
         when(tr.getKafkaProducer(any(KafkaConfig.class))).thenReturn(producer);
         when(tr.getRetry()).thenReturn(true).thenReturn(true).thenReturn(false);
@@ -360,7 +360,7 @@ public class TestGnipReader {
         when(tr.parseConfigFile(anyString())).thenReturn(config);
         when(tr.getMetrics(any(StatsReporter.StatsTracker.class))).thenCallRealMethod();
         Client client = mock(Client.class);
-        when(tr.getGnipClient(any(LinkedBlockingQueue.class), any(GnipConfig.class))).thenReturn(client);
+        when(tr.getHosebirdClient(any(LinkedBlockingQueue.class), any(GnipConfig.class))).thenReturn(client);
         Producer<String, String> producer = mock(Producer.class);
         when(tr.getKafkaProducer(any(KafkaConfig.class))).thenReturn(producer);
         when(tr.getRetry()).thenReturn(true).thenReturn(true).thenReturn(false);
@@ -452,7 +452,7 @@ public class TestGnipReader {
     public void should_log_error_if_config_not_JSON() {
         Producer<String, String> producer = mock(Producer.class);
         GnipReader tr = mock(GnipReader.class);
-        when(tr.getGnipClient(any(LinkedBlockingQueue.class), any(GnipConfig.class))).thenCallRealMethod();
+        when(tr.getHosebirdClient(any(LinkedBlockingQueue.class), any(GnipConfig.class))).thenCallRealMethod();
         when(tr.getKafkaProducer(any(KafkaConfig.class))).thenReturn(producer);
         when(tr.getClientBuilder()).thenReturn(this.cb);
         doNothing().when(tr).readAndSend(any(LinkedBlockingQueue.class), anyString(), any(Producer.class), any(ReadAndSendPredicate.class));
@@ -471,7 +471,7 @@ public class TestGnipReader {
     public void should_log_error_if_config_missing_items() {
         Producer<String, String> producer = mock(Producer.class);
         GnipReader tr = mock(GnipReader.class);
-        when(tr.getGnipClient(any(LinkedBlockingQueue.class), any(GnipConfig.class))).thenCallRealMethod();
+        when(tr.getHosebirdClient(any(LinkedBlockingQueue.class), any(GnipConfig.class))).thenCallRealMethod();
         when(tr.getKafkaProducer(any(KafkaConfig.class))).thenReturn(producer);
         when(tr.getClientBuilder()).thenReturn(this.cb);
         doNothing().when(tr).readAndSend(any(LinkedBlockingQueue.class), anyString(), any(Producer.class), any(ReadAndSendPredicate.class));
@@ -500,7 +500,7 @@ public class TestGnipReader {
     public void should_log_error_if_config_not_readable() {
         Producer<String, String> producer = mock(Producer.class);
         GnipReader tr = mock(GnipReader.class);
-        when(tr.getGnipClient(any(LinkedBlockingQueue.class), any(GnipConfig.class))).thenCallRealMethod();
+        when(tr.getHosebirdClient(any(LinkedBlockingQueue.class), any(GnipConfig.class))).thenCallRealMethod();
         when(tr.getKafkaProducer(any(KafkaConfig.class))).thenReturn(producer);
         when(tr.getClientBuilder()).thenReturn(this.cb);
         doNothing().when(tr).readAndSend(any(LinkedBlockingQueue.class), anyString(), any(Producer.class), any(ReadAndSendPredicate.class));
@@ -518,7 +518,7 @@ public class TestGnipReader {
     public void should_parse_valid_config() {
         Producer<String, String> producer = mock(Producer.class);
         GnipReader tr = mock(GnipReader.class);
-        when(tr.getGnipClient(any(LinkedBlockingQueue.class), any(GnipConfig.class))).thenCallRealMethod();
+        when(tr.getHosebirdClient(any(LinkedBlockingQueue.class), any(GnipConfig.class))).thenCallRealMethod();
         when(tr.getKafkaProducer(any(KafkaConfig.class))).thenReturn(producer);
         when(tr.getClientBuilder()).thenReturn(this.cb);
         doNothing().when(tr).readAndSend(any(LinkedBlockingQueue.class), anyString(), any(Producer.class), any(ReadAndSendPredicate.class));
@@ -556,7 +556,7 @@ public class TestGnipReader {
         tr.logClientExitReason(this.client);
 
         verify(this.logger).error(
-                "Gnip client stopped: {} {}",
+                "Hosebird client stopped: {} {}",
                 new Object[]{
                         "STOPPED_BY_ERROR",
                         "EXCEPTION"
@@ -877,7 +877,7 @@ public class TestGnipReader {
         tr.setRetry(true);
 
         try {
-            Field f = tr.getClass().getDeclaredField("retry");
+            Field f = tr.getClass().getSuperclass().getDeclaredField("retry");
             f.setAccessible(true);
             AtomicBoolean retry = (AtomicBoolean) f.get(tr);
             assertEquals(true, retry.get());
