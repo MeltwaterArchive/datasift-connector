@@ -1,24 +1,21 @@
 # DataSift Connector
 
-This project contains a set of components designed to retrieve data from third-party APIs and storage systems, and to pass that data in to your DataSift account.
+The DataSift Connector is a set of components that enable you to retrieve data from third-party APIs and storage systems, and to pass that data into the DataSift platform for processing.
 
-The current implementation only has built-in support for Gnip as a data source, but more sources will be coming soon. Note that you cannot upload arbitrary data - the platform requires support for the data format to be present. If you require further details on the potential for sending other data to DataSift please contact your account executive.
+*Note that the current implementation only has built-in support for Gnip as a data source, but more sources will be coming soon. Note that you cannot upload arbitrary data - the platform requires support for the data format to be present. If you require further details on the potential for sending other data to DataSift please contact your account executive.*
 
-## Quick Start
+## Before You Start
 
-Clone the repo:
+To deploy the connector or to work with it locally, you'll first need to clone the repo:
 
 - `git clone https://github.com/datasift/datasift-connector.git`
 - `cd datasift-connector`
 - `git checkout tags/x.y.z-1` where x.y.z is the tag of the [release](https://github.com/datasift/datasift-connector/releases) required.
 
-To run a local instance of the connector do the following:
 
-- Ensure [Vagrant](#vagrant) and relevant plug-ins are installed.
-- Ensure a stable version of [VirtualBox](https://www.virtualbox.org) is installed.
-- `vagrant up`
+## Quick Start - Deployment to EC2
 
-To run an instance of the connector on EC2 do the following:
+To run an instance of the connector on EC2:
 
 - Ensure [Packer](https://www.packer.io/docs/installation.html) is installed.
 - `cd packer`
@@ -26,16 +23,35 @@ To run an instance of the connector on EC2 do the following:
 - Once the Packer build has finished log on to your AWS dashboard, select the EC2 service and then click `AMIs`.
 - Launch an instance of the built AMI using the standard EC2 mechanism.
 
+After launching an instance, you'll next need to configure it:
 
-After launching an instance do the following to configure it:
-
-- SSH into the instance. eg. `vagrant ssh` or `ssh -i [PEM] root@[EC2-INSTANCE]`
+- SSH into the instance. `ssh -i [PEM] root@[EC2-INSTANCE]`
 - `sudo vi /etc/datasift/gnip-reader/reader.json` and add your Gnip credentials.
 - `sudo vi /etc/datasift/datasift-writer/writer.json` and add your DataSift credentials.
 - `sudo supervisorctl restart gnip-reader`
 - `sudo supervisorctl restart datasift-writer`
 - `exit`
-- Browse to `http://localhost:3000` (or the launched EC2 machine). User `admin`, password `admin`. Click on the dashboard to see relevant metrics.
+- Open your browser to the launched EC2 machine. User `admin`, password `admin`. Click on the dashboard to see relevant metrics.
+
+You will now be ingesting your Gnip data into DataSift.
+
+## Quick Start - Local Development
+
+To run a local instance of the connector do the following:
+
+- Ensure [Vagrant](#vagrant) and relevant plug-ins are installed.
+- Ensure a stable version of [VirtualBox](https://www.virtualbox.org) is installed.
+- `vagrant up`
+
+After launching an instance, you'll next need to configure it:
+
+- SSH into the instance. eg. `vagrant ssh`
+- `sudo vi /etc/datasift/gnip-reader/reader.json` and add your Gnip credentials.
+- `sudo vi /etc/datasift/datasift-writer/writer.json` and add your DataSift credentials.
+- `sudo supervisorctl restart gnip-reader`
+- `sudo supervisorctl restart datasift-writer`
+- `exit`
+- Browse to `http://localhost:3000`. User `admin`, password `admin`. Click on the dashboard to see relevant metrics.
 
 You will now be ingesting your Gnip data into DataSift.
 
@@ -56,7 +72,7 @@ We use [Vagrant](https://www.vagrantup.com/) for development and testing, and it
 
 To get started run `vagrant up` from the root directory. If chef fails the first time try `berks update`, `vagrant destroy` then `vagrant up`.
 
-## Design
+## Connector Design
 
 To give some context, the first diagram below shows where this connector fits into the DataSift Data Ingestion API. The second diagram shows the design of this connector.
 
