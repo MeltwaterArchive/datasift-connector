@@ -1,9 +1,6 @@
+user 'influxdb'
 
-influxdb 'main' do
-  source node['influxdb']['source']
-  config node['influxdb']['config']
-  action :create
-end
+include_recipe 'influxdb::default'
 
 supervisor_service 'influxdb' do
   user 'influxdb'
