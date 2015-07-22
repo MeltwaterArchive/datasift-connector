@@ -31,7 +31,7 @@ After launching an instance, you'll next need to configure it:
 - `sudo supervisorctl restart gnip-reader`
 - `sudo supervisorctl restart datasift-writer`
 - `exit`
-- Open your browser to the launched EC2 machine. User `admin`, password `admin`. Click on the dashboard to see relevant metrics.
+- Open your browser to port 3000 of the launched EC2 machine. User `admin`, password `admin`. Click on the dashboard to see relevant metrics.
 
 You will now be ingesting your Gnip data into DataSift.
 
