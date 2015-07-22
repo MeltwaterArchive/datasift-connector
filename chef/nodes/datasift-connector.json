@@ -14,6 +14,9 @@
   "java": {
     "jdk_version": 7
   },
+  "influxdb": {
+    "source": "https://s3.amazonaws.com/influxdb/influxdb-0.8.8-1.x86_64.rpm"
+  },
   "run_list": [
     "recipe[java]",
     "recipe[supervisor]",
