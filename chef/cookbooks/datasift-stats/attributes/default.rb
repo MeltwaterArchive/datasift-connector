@@ -14,6 +14,8 @@ default['statsd']['graphite_host'] = 'localhost'
 default['influxdb']['source'] = \
   'https://s3.amazonaws.com/influxdb/influxdb-0.8.8-1.x86_64.rpm'
 
+default['influxdb']['version'] = '0.8'
+
 # Parameters to configure InfluxDB
 # Based on https://github.com/influxdb/influxdb/blob/v0.8.5/config.sample.toml
 default['influxdb']['config'] = {

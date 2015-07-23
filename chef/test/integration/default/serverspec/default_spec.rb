@@ -46,7 +46,7 @@ describe 'datasift-stats::default' do
 
   describe file('/var/lib/grafana/grafana.db') do
     it { should be_file }
-    its(:md5sum) { should eq '33280bc02f59e5279ee081b19288b446' }
+    its(:md5sum) { should eq 'bd94e374df06347ba77770ba59ed0fd9' }
     it { should be_owned_by 'grafana' }
     it { should be_grouped_into 'grafana' }
     it { should be_readable }
