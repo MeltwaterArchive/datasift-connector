@@ -112,7 +112,9 @@ Example:
     "product": "PRODUCT",
     "username": "USER",
     "password": "PASSWORD",
-    "host": "https://stream.gnip.com",
+    "host": "https://stream.gnip.com"
+  },
+  "hosebird": {
     "retries": 10,
     "buffer_size": 10000,
     "buffer_timeout": 500
