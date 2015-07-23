@@ -42,6 +42,11 @@ To run a local instance of the connector do the following:
 - Ensure [Vagrant](#vagrant) and relevant plug-ins are installed.
 - Ensure a stable version of [VirtualBox](https://www.virtualbox.org) is installed.
 - `vagrant up`
+- If prompted, choose to bridge to a network adapter with internet access.
+
+Once the provisioning process has completed chef should report success, printing a log message similar to:
+
+`INFO: Chef Run complete in 100.00 seconds`
 
 After launching an instance, you'll next need to configure it:
 
@@ -168,6 +173,12 @@ Example:
   }
 }
 ```
+
+## Troubleshooting
+
+### Packer Builds & Vagrant Provisioning
+
+
 
 ## Contributing
 
