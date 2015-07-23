@@ -5,13 +5,19 @@
     "retry-backoff": 1001,
     "reconnect-backoff": 1002
   },
-  "twitter": {
+  "twitterapi": {
     "consumer_key": "aaaa",
     "consumer_secret": "bbbb",
     "access_token": "cccc",
     "access_secret": "dddd",
-    "keywords": ["datasift"],
-    "user_ids": [15282408],
+    "keywords": [
+      "datasift"
+    ],
+    "user_ids": [
+      15282408
+    ]
+  },
+  "hosebird": {
     "retries": 10,
     "buffer_size": 10000,
     "buffer_timeout": 500

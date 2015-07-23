@@ -9,7 +9,7 @@ import java.util.List;
  * The container for the Twitter configuration.
  */
 @SuppressWarnings("checkstyle:visibilitymodifier")
-public class TwitterConfig {
+public class TwitterApiConfig {
 
     /**
      * The oauth consumer key.
@@ -52,32 +52,4 @@ public class TwitterConfig {
     @JsonProperty("user_ids")
     @NotNull
     public List<Long> userIds;
-
-    /**
-     * The number of retries the client will
-     * perform on disconnection or error. The client
-     * starts at a retry interval of 5 seconds and
-     * backs off exponentially to a maximum of 320 seconds,
-     * so ten retries equates to just under a hour.
-     */
-    @SuppressWarnings("checkstyle:magicnumber")
-    @NotNull
-    public int retries = 10;
-
-    /**
-     * The buffer size for the client.
-     */
-    @JsonProperty("buffer_size")
-    @NotNull
-    public int bufferSize;
-
-    /**
-     * The timeout for the buffer to accept a new
-     * item in ms. The buffer will wait if full so the
-     * messages must be dequeued fast enough.
-     */
-    @JsonProperty("buffer_timeout")
-    @SuppressWarnings("checkstyle:magicnumber")
-    @NotNull
-    public int bufferTimeout = 500;
 }

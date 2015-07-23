@@ -7,6 +7,7 @@ import com.datasift.connector.reader.Metrics;
 import com.datasift.connector.reader.ReadAndSendPredicate;
 import com.datasift.connector.reader.config.Config;
 import com.datasift.connector.reader.config.GnipReaderConfig;
+import com.datasift.connector.reader.config.HosebirdConfig;
 import com.datasift.connector.reader.config.KafkaConfig;
 import com.datasift.connector.reader.config.MetricsConfig;
 import com.datasift.connector.reader.config.GnipConfig;
@@ -78,13 +79,14 @@ public class TestGnipReader {
 
         this.config = new GnipReaderConfig();
         this.config.gnip = new GnipConfig();
+        this.config.hosebird = new HosebirdConfig();
         this.config.gnip.account = "ACCOUNT";
         this.config.gnip.product = "PRODUCT";
         this.config.gnip.label = "LABEL";
         this.config.gnip.username = "USERNAME";
         this.config.gnip.password = "PASSWORD";
-        this.config.gnip.retries = 10;
-        this.config.gnip.bufferSize = 10000;
+        this.config.hosebird.retries = 10;
+        this.config.hosebird.bufferSize = 10000;
         this.config.kafka = new KafkaConfig();
         this.config.kafka.topic = "Data";
         this.config.metrics = new MetricsConfig();

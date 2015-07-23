@@ -255,7 +255,6 @@ public abstract class HosebirdReader {
 
         try {
             ObjectMapper mapper = new ObjectMapper();
-            mapper.enableDefaultTyping();
             Config config =  (Config) mapper.readValue(new File(jsonFile), getConfigClass());
             Set<ConstraintViolation<Config>> problems =
                     Validation.buildDefaultValidatorFactory()
