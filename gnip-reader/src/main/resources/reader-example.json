@@ -11,7 +11,9 @@
     "product": "PRODUCT",
     "username": "USER",
     "password": "PASSWORD",
-    "host": "http://localhost:5001",
+    "host": "http://localhost:5001"
+  },
+  "hosebird": {
     "retries": 10,
     "buffer_size": 10000,
     "buffer_timeout": 500
