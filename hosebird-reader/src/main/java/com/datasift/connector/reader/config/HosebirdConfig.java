@@ -1,54 +1,17 @@
 package com.datasift.connector.reader.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.twitter.hbc.core.Constants;
 
 import javax.validation.constraints.NotNull;
 
 /**
- * The container for the Gnip configuration.
+ * Base class for the configuration used by Hosebird reader
+ * variants.
  */
 @SuppressWarnings("checkstyle:visibilitymodifier")
-public class GnipConfig extends HosebirdConfig {
-
+public class HosebirdConfig {
     /**
-     * The Gnip account id.
-     */
-    @NotNull
-    public String account;
-
-    /**
-     * The label for the Gnip stream.
-     */
-    @NotNull
-    public String label;
-
-    /**
-     * The Gnip product name.
-     */
-    @NotNull
-    public String product;
-
-    /**
-     * The user for the Gnip account.
-     */
-    @NotNull
-    public String username;
-
-    /**
-     * The password for the Gnip account.
-     */
-    @NotNull
-    public String password;
-
-    /**
-     * The endpoint of the Gnip stream.
-     */
-    @NotNull
-    public String host = Constants.ENTERPRISE_STREAM_HOST;
-
-    /**
-     * The number of retries the Gnip client will
+     * The number of retries the Hosebird client will
      * perform on disconnection or error. The client
      * starts at a retry interval of 5 seconds and
      * backs off exponentially to a maximum of 320 seconds,
@@ -59,7 +22,7 @@ public class GnipConfig extends HosebirdConfig {
     public int retries = 10;
 
     /**
-     * The buffer size for the Gnip client.
+     * The buffer size for the reader client.
      */
     @JsonProperty("buffer_size")
     @NotNull
