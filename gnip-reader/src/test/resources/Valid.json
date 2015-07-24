@@ -1,6 +1,6 @@
 {
   "kafka": {
-    "topic": "twitter-gnip",
+    "topic": "twitter",
     "servers": "localhost:9092",
     "retry-backoff": 1001,
     "reconnect-backoff": 1002

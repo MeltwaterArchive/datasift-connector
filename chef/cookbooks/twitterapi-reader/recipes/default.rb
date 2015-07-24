@@ -57,4 +57,5 @@ supervisor_service 'twitterapi-reader' do
           '/usr/lib/datasift/twitterapi-reader/*" '\
           'com.datasift.connector.TwitterApiReader '\
           '/etc/datasift/twitterapi-reader/reader.json'
+  autostart false
 end

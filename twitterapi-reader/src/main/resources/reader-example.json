@@ -1,17 +1,20 @@
 {
   "kafka": {
-    "topic": "twitterapi",
+    "topic": "twitter",
     "servers": "localhost:9092",
     "retry-backoff": 1001,
     "reconnect-backoff": 1002
   },
-  "twitter": {
-    "consumer_key": "aaaa",
-    "consumer_secret": "bbbb",
-    "access_token": "cccc",
-    "access_secret": "dddd",
-    "keywords": ["datasift"],
-    "user_ids": [15282408],
+  "twitterapi": {
+    "consumer_key": "KEY",
+    "consumer_secret": "CONSUMER_SECRET",
+    "access_token": "TOKEN",
+    "access_secret": "ACCESS_SECRET",
+    "keywords": [
+      "datasift"
+    ]
+  },
+  "hosebird": {
     "retries": 10,
     "buffer_size": 10000,
     "buffer_timeout": 500
