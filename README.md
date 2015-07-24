@@ -184,9 +184,11 @@ Network issues are a common cause. Errors pertaining to reset connections or dom
   - VirtualBox bridged to the incorrect network adapter when executing `vagrant up`
   - A more reliable internet connection is required.
 
-If the error is Berkshelf/Chef based, it's usually a good idea to clear your local Berkshelf cache and update dependencies.
+If the error is Berkshelf/Chef based, it's usually a good idea to clear your local Berkshelf cache, and re-construct your vagrant machine. Inside your datasift-connector directory:
 
 `rm -rf ~/.berkshelf/*`
+`vagrant destroy`
+`vagrant up`
 
 ## Contributing
 
