@@ -192,6 +192,11 @@ vagrant destroy
 vagrant up
 ```
 
+It's also possible for certain dependencies, RPMs, templates and other files to become inaccessible. External web-servers experiencing downtime, or being reconfigured can cause fatal chef errors, which will cause provisioning to fail. In these cases, it's worth ensuring your repository has checked out the latest release tag, and re-provisioning after a short time:
+
+- `git checkout tags/x.y.z-1` where x.y.z is the tag of the [release](https://github.com/datasift/datasift-connector/releases) required.
+- `vagrant up` or `vagrant provision`, depending on whether the VM has been halted, or is still running respectively.
+
 ## Contributing
 
 We are always thrilled to receive pull requests, and do our best to process them as fast as possible. To create a pull request:
