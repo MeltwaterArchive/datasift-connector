@@ -186,6 +186,8 @@ Network issues are a common cause. Errors pertaining to reset connections or dom
 
 If the error is Berkshelf/Chef based, it's usually a good idea to clear your local Berkshelf cache and update dependencies.
 
+`rm -rf ~/.berkshelf/*`
+
 ## Contributing
 
 We are always thrilled to receive pull requests, and do our best to process them as fast as possible. To create a pull request:
