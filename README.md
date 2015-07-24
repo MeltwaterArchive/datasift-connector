@@ -48,6 +48,8 @@ Once the provisioning process has completed chef should report success, printing
 
 `INFO: Chef Run complete in 100.00 seconds`
 
+If errors are encountered during provisioning, you may find a solution in [troubleshooting](#troubleshooting)
+
 After launching an instance, you'll next need to configure it:
 
 - SSH into the instance. eg. `vagrant ssh`
