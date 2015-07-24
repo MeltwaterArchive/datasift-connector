@@ -42,6 +42,11 @@ To run a local instance of the connector do the following:
 - Ensure [Vagrant](#vagrant) and relevant plug-ins are installed.
 - Ensure a stable version of [VirtualBox](https://www.virtualbox.org) is installed.
 - `vagrant up`
+- If prompted, choose to bridge to a network adapter with internet access.
+
+Once the provisioning process has completed chef should report success, printing a log message similar to:
+
+`INFO: Chef Run complete in 100.00 seconds`
 
 After launching an instance, you'll next need to configure it:
 
@@ -168,6 +173,29 @@ Example:
   }
 }
 ```
+
+## Troubleshooting
+
+### Packer Builds & Vagrant Provisioning
+
+It may be that whilst executing Packer or provisioning a local VM with Vagrant, errors will be encountered. Project maintainers will refrain from merging any unstable Chef changes into master for releases, so errors will usually be caused by a localised issue.
+
+Network issues are a common cause. Errors pertaining to reset connections or domain name resolution indicate that:
+  - VirtualBox bridged to the incorrect network adapter when executing `vagrant up`
+  - A more reliable internet connection is required.
+
+If the error is Berkshelf/Chef based, it's usually a good idea to clear your local Berkshelf cache, and re-construct your vagrant machine. Inside your datasift-connector directory:
+
+```
+rm -rf ~/.berkshelf/*
+vagrant destroy
+vagrant up
+```
+
+It's also possible for certain dependencies, RPMs, templates and other files to become inaccessible. External web-servers experiencing downtime, or being reconfigured can cause fatal chef errors, which will cause provisioning to fail. In these cases, it's worth ensuring your repository has checked out the latest release tag, and re-provisioning after a short time:
+
+- `git checkout tags/x.y.z-1` where x.y.z is the tag of the [release](https://github.com/datasift/datasift-connector/releases) required.
+- `vagrant up` or `vagrant provision`, depending on whether the VM has been halted, or is still running respectively.
 
 ## Contributing
 
