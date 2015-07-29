@@ -21,6 +21,7 @@ To run an instance of the connector on EC2:
 - `./build.sh [AWS_ACCESS_KEY] [AWS_SECRET_KEY]`
 - Once the Packer build has finished log on to your AWS dashboard, select the EC2 service and then click `AMIs`.
 - Launch an instance of the built AMI using the standard EC2 mechanism.
+- *We recommend you start with a 'small' instance size - this is more than adequate for most uses*
 
 After launching an instance, you'll next need to configure it:
 
