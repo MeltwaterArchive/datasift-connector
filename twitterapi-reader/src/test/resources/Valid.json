@@ -5,13 +5,17 @@
     "retry-backoff": 1001,
     "reconnect-backoff": 1002
   },
-  "gnip": {
-    "account": "ACCOUNT",
-    "label": "LABEL",
-    "product": "PRODUCT",
-    "username": "USER",
-    "password": "PASSWORD",
-    "host": "http://localhost:5001"
+  "twitterapi": {
+    "consumer_key": "aaaa",
+    "consumer_secret": "bbbb",
+    "access_token": "cccc",
+    "access_secret": "dddd",
+    "keywords": [
+      "datasift"
+    ],
+    "user_ids": [
+      15282408
+    ]
   },
   "hosebird": {
     "retries": 10,

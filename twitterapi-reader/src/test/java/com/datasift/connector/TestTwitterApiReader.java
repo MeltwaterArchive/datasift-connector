@@ -6,11 +6,12 @@ import com.datasift.connector.reader.Messages;
 import com.datasift.connector.reader.Metrics;
 import com.datasift.connector.reader.ReadAndSendPredicate;
 import com.datasift.connector.reader.config.Config;
-import com.datasift.connector.reader.config.GnipReaderConfig;
 import com.datasift.connector.reader.config.HosebirdConfig;
 import com.datasift.connector.reader.config.KafkaConfig;
 import com.datasift.connector.reader.config.MetricsConfig;
-import com.datasift.connector.reader.config.GnipConfig;
+import com.datasift.connector.reader.config.TwitterApiConfig;
+import com.datasift.connector.reader.config.TwitterApiReaderConfig;
+import com.google.common.collect.Lists;
 import com.twitter.hbc.ClientBuilder;
 import com.twitter.hbc.core.Client;
 import com.twitter.hbc.core.Constants;
@@ -50,20 +51,20 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 
-public class TestGnipReader {
+public class TestTwitterApiReader {
 
     private BasicClient client = null;
     private ClientBuilder cb = null;
     private Logger logger = null;
-    private GnipReaderConfig config = null;
+    private TwitterApiReaderConfig config = null;
     private ReadAndSendPredicate clientReadAndSendPredicate = null;
 
     @Before
     public void setup() {
         this.client = mock(BasicClient.class);
         this.cb = mock(ClientBuilder.class);
-        when(cb.name("Gnip Reader")).thenReturn(cb);
-        when(cb.hosts(Constants.ENTERPRISE_STREAM_HOST)).thenReturn(cb);
+        when(cb.name("Twitter Api Reader")).thenReturn(cb);
+        when(cb.hosts(Constants.STREAM_HOST)).thenReturn(cb);
         when(cb.endpoint(any(StreamingEndpoint.class))).thenReturn(cb);
         when(cb.authentication(any(Authentication.class))).thenReturn(cb);
         when(cb.processor(any(HosebirdMessageProcessor.class))).thenReturn(cb);
@@ -77,14 +78,13 @@ public class TestGnipReader {
                 }
             };
 
-        this.config = new GnipReaderConfig();
-        this.config.gnip = new GnipConfig();
+        this.config = new TwitterApiReaderConfig();
         this.config.hosebird = new HosebirdConfig();
-        this.config.gnip.account = "ACCOUNT";
-        this.config.gnip.product = "PRODUCT";
-        this.config.gnip.label = "LABEL";
-        this.config.gnip.username = "USERNAME";
-        this.config.gnip.password = "PASSWORD";
+        this.config.twitterapi = new TwitterApiConfig();
+        this.config.twitterapi.consumerKey = "aaaaa";
+        this.config.twitterapi.consumerSecret = "bbbbb";
+        this.config.twitterapi.accessToken = "ccccc";
+        this.config.twitterapi.accessSecret = "ddddd";
         this.config.hosebird.retries = 10;
         this.config.hosebird.bufferSize = 10000;
         this.config.kafka = new KafkaConfig();
@@ -100,8 +100,8 @@ public class TestGnipReader {
     @SuppressWarnings("unchecked")
     public void should_parse_valid_config() {
         Producer<String, String> producer = mock(Producer.class);
-        GnipReader tr = mock(GnipReader.class);
-        when(tr.getHosebirdClient(any(LinkedBlockingQueue.class), any(GnipReaderConfig.class))).thenCallRealMethod();
+        TwitterApiReader tr = mock(TwitterApiReader.class);
+        when(tr.getHosebirdClient(any(LinkedBlockingQueue.class), any(TwitterApiReaderConfig.class))).thenCallRealMethod();
         when(tr.getKafkaProducer(any(KafkaConfig.class))).thenReturn(producer);
         when(tr.getClientBuilder()).thenReturn(this.cb);
         doNothing().when(tr).readAndSend(any(LinkedBlockingQueue.class), anyString(), any(Producer.class), any(ReadAndSendPredicate.class));
@@ -111,14 +111,14 @@ public class TestGnipReader {
         Logger logger = mock(Logger.class);
         tr.setLogger(logger);
         String workingDir = System.getProperty("user.dir");
-        GnipReaderConfig config = (GnipReaderConfig)tr.parseConfigFile(workingDir + "/src/test/resources/Valid.json");
+        TwitterApiReaderConfig config = (TwitterApiReaderConfig) tr.parseConfigFile(workingDir + "/src/test/resources/Valid.json");
         verify(logger, never()).error(anyString());
-        assertEquals("ACCOUNT", config.gnip.account);
-        assertEquals("LABEL", config.gnip.label);
-        assertEquals("PRODUCT", config.gnip.product);
-        assertEquals("USER", config.gnip.username);
-        assertEquals("PASSWORD", config.gnip.password);
-        assertEquals("http://localhost:5001", config.gnip.host);
+        assertEquals("aaaa", config.twitterapi.consumerKey);
+        assertEquals("bbbb", config.twitterapi.consumerSecret);
+        assertEquals("cccc", config.twitterapi.accessToken);
+        assertEquals("dddd", config.twitterapi.accessSecret);
+        assertEquals(Lists.newArrayList("datasift"), config.twitterapi.keywords);
+        assertEquals(Lists.newArrayList(Long.parseLong("15282408")), config.twitterapi.userIds);
         assertEquals(10, config.hosebird.retries);
         assertEquals(10000, config.hosebird.bufferSize);
         assertEquals(500, config.hosebird.bufferTimeout);
@@ -132,7 +132,7 @@ public class TestGnipReader {
     @SuppressWarnings("unchecked")
     public void getHosebirdCient_should_create_client_correctly() {
         Producer<String, String> producer = mock(Producer.class);
-        GnipReader tr = mock(GnipReader.class);
+        TwitterApiReader tr = mock(TwitterApiReader.class);
         reset(this.logger);
         tr.setLogger(this.logger);
         when(tr.getMetrics(any(StatsReporter.StatsTracker.class))).thenCallRealMethod();
@@ -145,38 +145,28 @@ public class TestGnipReader {
         when(client.isDone()).thenReturn(true);
         LinkedBlockingQueue<String> lbq = new LinkedBlockingQueue<>(10);
         tr.getHosebirdClient(lbq, config);
-        verify(cb).name("Gnip Reader");
-        verify(cb).hosts(Constants.ENTERPRISE_STREAM_HOST);
+        verify(cb).name("Twitter Api Reader");
+        verify(cb).hosts(Constants.STREAM_HOST);
 
         ArgumentCaptor<StreamingEndpoint> se = ArgumentCaptor.forClass(StreamingEndpoint.class);
         verify(cb).endpoint(se.capture());
-        assertEquals("/accounts/ACCOUNT/publishers/twitter/streams/PRODUCT/LABEL.json", se.getValue().getURI());
+        assertEquals("/1.1/statuses/filter.json?delimited=length&stall_warnings=true", se.getValue().getURI());
 
         // Unfortunately there's not a good way of asserting that the Authentication and Processor have
         // been created with the correct parameters.
-
-        ArgumentCaptor<Authentication> a = ArgumentCaptor.forClass(Authentication.class);
-        verify(cb).authentication(a.capture());
-        BasicAuth expectedAuth = new BasicAuth("USERNAME", "PASSWORD");
-        // assertEquals(expectedAuth, a.getValue());
-
-        ArgumentCaptor<HosebirdMessageProcessor> hbmp = ArgumentCaptor.forClass(HosebirdMessageProcessor.class);
-        verify(cb).processor(hbmp.capture());
-        LineStringProcessor expectedProcessor = new LineStringProcessor(lbq);
-        //assertEquals(expectedProcessor, hbmp.getValue());
 
         verify(cb).retries(10);
     }
 
     @Test
     public void should_return_correct_config_class() {
-        GnipReader gnipReader = new GnipReader();
-        assertEquals(GnipReaderConfig.class, gnipReader.getConfigClass());
+        TwitterApiReader gnipReader = new TwitterApiReader();
+        assertEquals(TwitterApiReaderConfig.class, gnipReader.getConfigClass());
     }
 
     @Test
     public void should_create_correct_logger() {
-        GnipReader gnipReader = new GnipReader();
-        assertEquals(LoggerFactory.getLogger(GnipReader.class), gnipReader.createLogger());
+        TwitterApiReader gnipReader = new TwitterApiReader();
+        assertEquals(LoggerFactory.getLogger(TwitterApiReader.class), gnipReader.createLogger());
     }
 }
