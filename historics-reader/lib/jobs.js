@@ -133,6 +133,14 @@ Jobs.prototype.getJobs = function(filters, next) {
 			if (filters.status) {
 				sql += ' where status = $status'
 				params['$status'] = filters.status
+			} else if (filters.exclusion_status) {
+				sql += ' where status != ' + filter.exclusion_status[0]
+				if (filter.exclusion_status.length > 1) {
+					var otherExclusions = filter.exclusion_status.slice(1)
+					for (var key in otherExclusions) {
+						sql += ' or status != ' + otherExclusions[key]
+					}
+				}
 			}
 			if (!filters.page) {
 				filters.page = 1

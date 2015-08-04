@@ -1,4 +1,5 @@
 var http = require('http');
+var https = require('https');
 
 function Gnip(config) {
 	this._use_ssl = config.gnip.use_ssl
@@ -15,15 +16,29 @@ Gnip.prototype.getJob = function(job_id, next) {
 		//headers: {'custom': 'Custom Header Demo works'}
 	}
 
-	var req = http.request(options, function(response) {
-		var str = ''
-		response.on('data', function (chunk) {
-			str += chunk;
-		});
+	if (this._use_ssl) {
+		var req = https.request(options, function (response) {
+			var str = ''
+			response.on('data', function (chunk) {
+				str += chunk;
+			});
 
-		response.on('end', function () {
-			console.log(str);
+			response.on('end', function () {
+
+			});
 		});
-	});
-	req.end();
+		req.end();
+	} else {
+		var req = http.request(options, function (response) {
+			var str = ''
+			response.on('data', function (chunk) {
+				str += chunk;
+			});
+
+			response.on('end', function () {
+				console.log(str);
+			});
+		});
+		req.end();
+	}
 }
