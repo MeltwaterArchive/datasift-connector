@@ -75,7 +75,7 @@ public class GnipReader extends HosebirdReader {
                         config.label);
         BasicAuth auth = new BasicAuth(config.username, config.password);
         LineStringProcessor processor =
-                new LineStringProcessor(buffer, config.bufferTimeout);
+                new LineStringProcessor(buffer, readerConfig.hosebird.bufferTimeout);
 
         return this.getClientBuilder()
                 .name("Gnip Reader")
@@ -83,7 +83,7 @@ public class GnipReader extends HosebirdReader {
                 .endpoint(endpoint)
                 .authentication(auth)
                 .processor(processor)
-                .retries(config.retries)
+                .retries(readerConfig.hosebird.retries)
                 .build();
     }
 }

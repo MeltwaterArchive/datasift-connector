@@ -1,6 +1,6 @@
 {
   "kafka": {
-    "topic": "twitter-gnip",
+    "topic": "twitter",
     "servers": "localhost:6667",
     "retry-backoff": 1000,
     "reconnect-backoff": 1000
@@ -21,7 +21,7 @@
   "metrics": {
     "host": "localhost",
     "port": 8125,
-    "prefix": "gnip.reader",
+    "prefix": "hosebird.reader",
     "reporting-time": 1
   }
 }

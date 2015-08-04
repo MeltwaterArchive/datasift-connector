@@ -11,7 +11,5 @@ public class TestGnipConfig {
     public void should_set_defaults_on_construction() {
         GnipConfig tc = new GnipConfig();
         assertEquals(Constants.ENTERPRISE_STREAM_HOST, tc.host);
-        assertEquals(10, tc.retries);
-        assertEquals(500, tc.bufferTimeout);
     }
 }
