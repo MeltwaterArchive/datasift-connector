@@ -9,8 +9,8 @@ function Gnip(config) {
 
 Gnip.prototype.getJob = function(job_id, next) {
 	var options = {
-		host: this._domain
-		path: '/accounts/' + this._account_name + '/publishers/twitter/historical/track/jobs/' + job_id + '.json'
+		host: this._domain,
+		path: '/accounts/' + this._account_name + '/publishers/twitter/historical/track/jobs/' + job_id + '.json',
 		port: this._port
 		//headers: {'custom': 'Custom Header Demo works'}
 	}

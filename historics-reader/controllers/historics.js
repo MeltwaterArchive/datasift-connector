@@ -1,6 +1,6 @@
 var config = require('../config.js')
   , Jobs = require('../lib/jobs.js')
-  , logger = require('log4js').getLogger('historics-reader')
+  , logger = require('log4js').getLogger('historics-api-controller')
 
 var jobs = new Jobs(config)
 

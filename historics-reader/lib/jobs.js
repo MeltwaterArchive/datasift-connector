@@ -1,5 +1,5 @@
 var sqlite3 = require('sqlite3').verbose()
-var logger = require('log4js').getLogger('historics-reader')
+var logger = require('log4js').getLogger('historics-job-db')
 var utils = require('./utils')
 
 var levels = {

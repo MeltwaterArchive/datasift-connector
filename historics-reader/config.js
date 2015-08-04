@@ -6,5 +6,9 @@ module.exports = {
 		domain: 'historical.gnip.com',
 		port: 443,
 		account_name: 'datasift'
+	},
+	zookeeper: {
+		socket: 'localhost:2181',
+		clientId: 'historics-kafka-client'
 	}
 }
