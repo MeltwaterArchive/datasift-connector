@@ -18,7 +18,11 @@
     "dependencies": {
         "restify": "~2",
         "sqlite3": "~3",
-        "log4js": "~0.6"
+        "log4js": "~0.6",
+        "kafka-node": "0.2.27",
+        "event-stream": "3.3.1",
+        "async": "1.4.0",
+        "sync": "0.2.5"
     },
     "devDependencies": {
         "mocha": "1.x"
