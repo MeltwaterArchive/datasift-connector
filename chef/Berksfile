@@ -6,6 +6,7 @@ cookbook 'datasift-kafka', path: 'cookbooks/datasift-kafka'
 cookbook 'datasift-writer', path: 'cookbooks/datasift-writer'
 cookbook 'gnip-reader', path: 'cookbooks/gnip-reader'
 cookbook 'twitterapi-reader', path: 'cookbooks/twitterapi-reader'
+cookbook 'historics', path: 'cookbooks/historics'
 cookbook 'webapp', path: 'cookbooks/webapp'
 cookbook 'supervisor',
          git: 'https://github.com/poise/supervisor.git',

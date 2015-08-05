@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 var restify = require('restify')
   , config = require('./config.js')
-  , logger = require('log4js').getLogger('historics-reader')
+  , logger = require('log4js').getLogger('historics-server')
   , historicsController = require('./controllers/historics.js')
 
 var server = restify.createServer()
