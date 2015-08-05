@@ -84,7 +84,7 @@ public class Metrics {
             registry.meter("disconnected");
 
 
-    // *** Metrics collected by Gnip client
+    // *** Metrics collected by Hosebird client
 
     /**
      * Number of 200 http response codes in the lifetime of the client.

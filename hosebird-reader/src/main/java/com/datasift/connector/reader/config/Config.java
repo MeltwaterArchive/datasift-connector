@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
  * for the Gnip Reader service.
  */
 @SuppressWarnings("checkstyle:visibilitymodifier")
-public class Config {
+public abstract class Config {
 
     /**
      * The Kafka configuration.
@@ -16,10 +16,10 @@ public class Config {
     public KafkaConfig kafka;
 
     /**
-     * The Gnip configuration.
+     * The Hosebird configuration.
      */
     @NotNull
-    public GnipConfig gnip;
+    public HosebirdConfig hosebird;
 
     /**
      * The metrics configuration.
