@@ -17,16 +17,14 @@ var logger = require('log4js').getLogger('historics-reader'),
 logger.info('Historics processing script starting at timestamp: ' + utils.getCurrentTimestampMs())
 
 var jobs = new Jobs(config)
+var urlsToProcess = 0
 var producer = kafka.Producer,
     client = new kafka.Client(config.kafka.socket, config.kafka.clientId),
     producer = new Producer(client);
 
 producer.on('ready',function(){
     logger.info("kafka producer is connected");
-    jobs.open(function(err) {
-        if (err) logger.error('Could not open sqlite database ' + config.sqlite_filename + '. Error: ' + err)
-        else readJobs()
-    });
+    readJobs()
 });
 
 producer.on('error',function(err){
@@ -68,34 +66,79 @@ function updateJobStatus(jobId, status, cb) {
 }
 
 function processJobs() {
+    var currentJob
     Sync(function() {
         lockJob.sync(null)
+        currentJob = getLockedJob.sync(null)
     })
 
-    ASync.whilst(function() {
-        return
-    })
+    ASync.whilst(function() { return currentJob !== null; },
+        function() {
+            Jobs.updateJob(currentJob, {status: 'processing'}, function(err, row) {
+                if (err) logger.error('Could not update job ' + currentJob + ' status to processing. ' + err)
+                Sync(function() {
+                    fetchJobResults.sync(currentJob)
+                    processFiles.sync(jobId)
+                    completeJob.sync(jobId)
+
+                    lockJob.sync(null)
+                    currentJob = getLockedJob.sync(null)
+                })
+            })
+        },
+        function(err) {
+            log.info('No delivered jobs could be locked for further processing.')
+        }
+    );
 }
 
 function lockJob(cb) {
     Jobs.lockJob(function(err) {
         if (err) logger.error('Could not lock job ' + jobId + ' in sqlite db. ' + err)
-        else {
+        else cb()
+    });
+};
 
+function getLockedJob(cb) {
+    Jobs.getLockedJob(function(err, row) {
+        if (err) {
+            logger.error('Could not get locked job ' + jobId + ' in sqlite db. ' + err)
+            cb(null, null)
+        }
+        else {
+            cb(null, row.id)
         }
     });
 };
 
 function fetchJobResults(jobId) {
-
+    Gnip.getJobResults(jobId, function(err, results) {
+        if (err) logger.error('Could not retrieve job results for ' + jobId + '. ' + err)
+        else updateJobResults()
+    })
 };
 
 function updateJobResults(jobId, data) {
-
+    Gnip.updateJob(jobId, {urls: data.urls, suspect_minutes_url: data.suspectMinutesUrl}, null, function(err, row) {
+        if (err) logger.error('Could not store the results URLs for job ' + jobId + '. ' + err)
+    })
 };
 
-function processFiles(files) {
-
+function processFiles(jobId) {
+    Jobs.getJob(jobId, function(err, row) {
+        if (err) {
+            logger.error('Could not read job ' + jobId + ' from database for URL processing. ' + err)
+        }
+        else {
+            urlsToProcess = row.urls.length
+            row.urls.forEach(function(url) {
+                downloadFile(url)
+            })
+            while (urlsToProcess > 0) {
+                setTimeout(function() { }, 1000);
+            }
+        }
+    })
 };
 
 function downloadFile(urlStr) {
@@ -168,6 +211,7 @@ function deleteFile(path) {
         if (err) logger.error('Could not delete temporary job file ' + path)
         else {
             logger.info('Successfully deleted job file: ' + path);
+            urlsToProcess--;
         }
     })
 };

@@ -242,6 +242,50 @@ Jobs.prototype.updateJob = function(job_id, data, filters, next) {
 	})
 }
 
+Jobs.prototype.lockJob = function(next) {
+	this.open(function (err, jobs_obj) {
+		if (err) {
+			logger.error('Jobs.lockJob: ' + err)
+			next(err)
+		} else {
+			var sql_data = {}
+			var sql = 'update jobs set lock = $lock and status = $status order by added_at asc limit 1'
+			sql_data['$lock'] = os.hostname + '-' + process.pid
+			sql_data['$status'] = 'delivered'
+
+			jobs_obj._db.run(sql, sql_data, function(err) {
+				if (err) {
+					next(err)
+				} else {
+					next(null)
+				}
+			})
+		}
+	})
+}
+
+Jobs.prototype.getLockedJob = function(next) {
+	this.open(function (err, jobs_obj) {
+		if (err) {
+			logger.error('Jobs.getLockedJob: ' + err)
+			next(err)
+		} else {
+			var sql_data = {}
+			var sql = 'select * from jobs where lock = $lock and status = $status order by added_at asc limit 1'
+			sql_data['$lock'] = os.hostname + '-' + process.pid
+			sql_data['$status'] = 'delivered'
+
+			jobs_obj._db.run(sql, sql_data, function(err, row) {
+				if (err) {
+					next(err)
+				} else {
+					next(err, row)
+				}
+			})
+		}
+	})
+}
+
 Jobs.prototype.log = function(job_id, level, content, next) {
 	if (!levels[level]) {
 		next('Unknown log level: ' + level)
