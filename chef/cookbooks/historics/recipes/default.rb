@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: historics-reader
+# Cookbook Name:: historics
 # Recipe:: default
 #
 # Copyright (c) 2015 The Authors, All Rights Reserved.
