@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 var fs = require('fs')
-		, http = require('http')
-		, path = require('path')
-		, port = process.argv[2] || 5001
-		, data_filename = process.argv[3] || 'data/raw.json'
-		, min_delay_ms = process.argv[4] || 4
-		, max_delay_ms = process.argv[5] || 500
+	, http = require('http')
+	, path = require('path')
+	, port = process.argv[2] || 5001
+	, data_filename = process.argv[3] || 'data/raw.json'
+	, min_delay_ms = process.argv[4] || 4
+	, max_delay_ms = process.argv[5] || 500
 
 var data = fs.readFileSync(data_filename).toString().split("\n");
 
