@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 var fs = require('fs')
 		, http = require('http')
+		, path = require('path')
 		, port = process.argv[2] || 5001
 		, data_filename = process.argv[3] || 'data/raw.json'
 		, min_delay_ms = process.argv[4] || 4
@@ -78,6 +79,23 @@ var handleGetJobRequest = function(req, res) {
 	res.end()
 }
 
+var handleGetJobResultRequest = function(req, res) {
+	console.log('Get job result request received from ' + req.connection.remoteAddress + ': ' + req.url)
+	// Get the account from the URL - this will tell us which canned response is wanted.
+	res.writeHead(200, {'Content-Type': 'application/json'})
+	var json = {
+		'urlCount': 1,
+		'urlList': [
+			'http://' + req.headers.host + '/activities.json.gz'
+		],
+		'totalFileSizeBytes':10000,
+		'suspectMinutesUrl': 'http://' + req.headers.host + '/suspectMinutes.json',
+		'expiresAt' : '2012-11-24T18:53:23Z'
+	}
+	res.write(JSON.stringify(json))
+	res.end()
+}
+
 var sendNextLine = function(res, line_number) {
 	if (!data[line_number]) {
 		line_number = 0
@@ -87,6 +105,33 @@ var sendNextLine = function(res, line_number) {
 	setTimeout(function() {
 		sendNextLine(res, line_number + 1)
 	}, Math.floor(Math.random() * (max_delay_ms - min_delay_ms) + min_delay_ms))
+}
+
+var handleResultFileRequest = function(req, res) {
+	var filePath = path.join(__dirname, '/data/activities.json.gz');
+	var stat = fs.statSync(filePath);
+
+	res.writeHead(200, {
+		'Content-Type': 'application/json',
+		'Content-Encoding': 'gzip',
+		'Content-Length': stat.size
+	});
+
+	var readStream = fs.createReadStream(filePath);
+	readStream.pipe(res);
+}
+
+var handleSuspectMinuteRequest = function(req, res) {
+	var filePath = path.join(__dirname, '/data/suspectMinutes.json');
+	var stat = fs.statSync(filePath);
+
+	res.writeHead(200, {
+		'Content-Type': 'application/json',
+		'Content-Length': stat.size
+	});
+
+	var readStream = fs.createReadStream(filePath);
+	readStream.pipe(res);
 }
 
 var handleStreamingConnection = function(req, res) {
@@ -100,8 +145,14 @@ var handleStreamingConnection = function(req, res) {
 }
 
 var server = http.createServer(function (req, res) {
-	if (req.url.indexOf('/publishers/twitter/historical/track/jobs/') > -1) {
+	if (req.url.indexOf('result.json', req.url.length - 'result.json'.length) !== -1) {
+		handleGetJobResultRequest(req, res)
+	} else if (req.url.indexOf('/publishers/twitter/historical/track/jobs/') > -1) {
 		handleGetJobRequest(req, res)
+	} else if (req.url.indexOf('/activities.json.gz') > -1) {
+		handleResultFileRequest(req, res)
+	} else if (req.url.indexOf('/suspectMinutes.json') > -1) {
+		handleSuspectMinuteRequest(req, res)
 	} else if (req.url.indexOf('/streams/track/') > -1) {
 		handleStreamingConnection(req, res)
 	} else {

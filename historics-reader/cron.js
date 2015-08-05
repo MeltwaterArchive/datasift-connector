@@ -3,12 +3,16 @@ var logger = require('log4js').getLogger('historics-reader'),
     utils = require('./lib/utils.js'),
     config = require('./config.js'),
     Jobs = require('./lib/jobs.js'),
+    Gnip = require('./lib/gnip.js'),
     kafka = require('kafka-node'),
     fs = require('fs'),
     https = require('https'),
     url = require('url'),
     zlib = require('zlib'),
-    es = require('event-stream');
+    es = require('event-stream'),
+    Sync = require('sync'),
+    ASync = require('async'),
+    os = require('os');
 
 logger.info('Historics processing script starting at timestamp: ' + utils.getCurrentTimestampMs())
 
@@ -21,7 +25,7 @@ producer.on('ready',function(){
     logger.info("kafka producer is connected");
     jobs.open(function(err) {
         if (err) logger.error('Could not open sqlite database ' + config.sqlite_filename + '. Error: ' + err)
-        else updateJobs()
+        else readJobs()
     });
 });
 
@@ -29,22 +33,57 @@ producer.on('error',function(err){
     log.error("Error initialising Kafka producer: " + err)
 });
 
-function updateJobs() {
+function readJobs() {
     var filters = { status_exclusion: ['processing', 'done'] }
     jobs.getJobs(filters, function(err, rows) {
         if (err) logger.error('Could not retrieve status of jobs from sqlite db: ' + err)
-        else processJobs(rows)
+        else updateJobs(rows)
     });
 };
 
-function processJobs(jobRows) {
-    jobRows.forEach(function(job) {
-        
+function updateJobs(jobRows) {
+    jobRows.forEach(function (jobItem) {
+        Sync(function () {
+            var status = fetchJobStatus.sync(jobItem.id, null)
+            if (status && (status != jobItem.status)) {
+                updateJobStatus.sync(jobItem.id, status, null)
+            }
+        })
     });
+    processJobs()
 };
 
-function lockJob(jobId) {
+function fetchJobStatus(jobId, cb) {
+    Gnip.getJob(jobId, function(err, jsonData) {
+        if (err) logger.error('Could not retrieve status for job ' + jobId + ' from GNIP API. ' + err)
+        else cb(jsonData.status)
+    });
+}
 
+function updateJobStatus(jobId, status, cb) {
+    Jobs.updateJob(jobId, {status: status}, function(err, row) {
+        if (err) logger.error('Could not update status for job ' + jobId + ' to ' + status + '. ' + err)
+        else cb()
+    });
+}
+
+function processJobs() {
+    Sync(function() {
+        lockJob.sync(null)
+    })
+
+    ASync.whilst(function() {
+        return
+    })
+}
+
+function lockJob(cb) {
+    Jobs.lockJob(function(err) {
+        if (err) logger.error('Could not lock job ' + jobId + ' in sqlite db. ' + err)
+        else {
+
+        }
+    });
 };
 
 function fetchJobResults(jobId) {

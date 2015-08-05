@@ -134,11 +134,13 @@ Jobs.prototype.getJobs = function(filters, next) {
 				sql += ' where status = $status'
 				params['$status'] = filters.status
 			} else if (filters.exclusion_status) {
-				sql += ' where status != ' + filter.exclusion_status[0]
+				sql += ' where status != $' + filter.exclusion_status[0]
+				params['$' + filter.exclusion_status[0]] = filter.exclusion_status[0]
 				if (filter.exclusion_status.length > 1) {
 					var otherExclusions = filter.exclusion_status.slice(1)
 					for (var key in otherExclusions) {
-						sql += ' or status != ' + otherExclusions[key]
+						sql += ' or status != $' + otherExclusions[key]
+						params['$' + otherExclusions[key]] = otherExclusions[key]
 					}
 				}
 			}
@@ -196,7 +198,7 @@ Jobs.prototype.getJob = function(job_id, next) {
 	})
 }
 
-Jobs.prototype.updateJob = function(job_id, data, next) {
+Jobs.prototype.updateJob = function(job_id, data, filters, next) {
 	this.open(function (err, jobs_obj) {
 		if (err) {
 			logger.error('Jobs.updateJob: [' + job_id + '] ' + err)
@@ -217,8 +219,17 @@ Jobs.prototype.updateJob = function(job_id, data, next) {
 			}
 			}
 			sql = sql.substring(0, sql.length - 2)
-			sql+= ' where id = $job_id'
+			sql += ' where id = $job_id'
 			sql_data['$job_id'] = job_id
+
+			if (filters.lock) {
+				sql += ' and lock = $lock'
+				sql_data['$lock'] = filters.lock
+			}
+			if (filters.status) {
+				sql += ' and status = $status'
+				sql_data['$status'] = filters.status
+			}
 
 			jobs_obj._db.run(sql, sql_data, function(err) {
 				if (err) {
