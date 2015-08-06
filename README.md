@@ -21,7 +21,7 @@ To run an instance of the connector on EC2:
 - `cd packer`
 - `./build.sh [AWS_ACCESS_KEY] [AWS_SECRET_KEY]`
 - Once the Packer build has finished log on to your AWS dashboard, select the EC2 service and then click `AMIs`.
-- Launch an instance of the built AMI using the standard EC2 mechanism.
+- Launch an instance of the built AMI using the standard EC2 mechanism. Read [our wiki article](https://github.com/datasift/datasift-connector/wiki/Can-I-deploy-the-DataSift-Connector-to-an-existing-EC2-instance%3F) for information about why we recommend launching a new EC2 instance, rather than using an existing one.
 
 After launching an instance, you'll next need to configure it:
 
