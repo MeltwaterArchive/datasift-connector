@@ -15,7 +15,7 @@ directory '/usr/lib/datasift/historics' do
 end
 
 template '/usr/lib/datasift/historics/config.json' do
-  owner 'reader'
+  owner 'historics'
   action :create_if_missing
 end
 
@@ -25,4 +25,3 @@ supervisor_service 'historics-api' do
   directory '/usr/lib/datasift/historics'
   autostart true
 end
-
