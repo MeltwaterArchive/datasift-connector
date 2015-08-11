@@ -174,6 +174,12 @@ Example:
 
 ## Troubleshooting
 
+### Logging
+
+The majority of relevant log files can be found in `/var/log/supervisor`. The default log level for the datasift-writer & gnip-reader services is INFO. For debugging purposes this can be altered on line 2 of `log4j.properties`, found under `/etc/datasift/datasift-writer` & `/etc/datasift/gnip-reader`. A restart using `sudo supervisor restart service-name` is required for a change of level to take effect. Note that switching to DEBUG or further levels may cause storage issues.
+
+Logs may be tailed directly via Supervisor: `sudo supervisorctl tail -f datasift-writer`
+
 ### Known Issues
 
 #### EC2
