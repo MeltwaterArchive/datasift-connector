@@ -15,13 +15,15 @@ To deploy the connector or to work with it locally, you'll first need to clone t
 
 ## Quick Start - Deployment to EC2
 
+Please note that the connector has been developed and tested within CentOS 6.5. The source AMI in use by our ami.json packer configuration is [ami-c2a818aa](https://aws.amazon.com/marketplace/pp/B00NQAYLWO/ref=rev_all_product_title). The connector is not guaranteed to operate correctly when deployed using alternative source images.
+
 To run an instance of the connector on EC2:
 
 - Ensure [Packer](https://www.packer.io/docs/installation.html) is installed.
 - `cd packer`
 - `./build.sh [AWS_ACCESS_KEY] [AWS_SECRET_KEY]`
 - Once the Packer build has finished log on to your AWS dashboard, select the EC2 service and then click `AMIs`.
-- Launch an instance of the built AMI using the standard EC2 mechanism.
+- Launch an instance of the built AMI using the standard EC2 mechanism. Read [our wiki article](https://github.com/datasift/datasift-connector/wiki/Can-I-deploy-the-DataSift-Connector-to-an-existing-EC2-instance%3F) for information about why we recommend launching a new EC2 instance, rather than using an existing one.
 
 After launching an instance, you'll next need to configure it:
 
@@ -221,6 +223,12 @@ Example:
 ```
 
 ## Troubleshooting
+
+### Known Issues
+
+#### EC2
+
+- Deploying the connector AMI to EC2 on top of a Debian based OS will likely cause issues with multiple components within the connector instance. As noted in 'Quick Start - Deployment to EC2', the connector has been developed and tested wtihin a pre-built CentOS 6.5 environment, and we strongly advise that packer be run using the included packer/build.sh script.
 
 ### Packer Builds & Vagrant Provisioning
 

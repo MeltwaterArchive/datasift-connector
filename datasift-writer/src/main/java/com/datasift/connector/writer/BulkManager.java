@@ -2,6 +2,7 @@ package com.datasift.connector.writer;
 
 import com.codahale.metrics.Timer;
 import com.datasift.connector.writer.config.DataSiftConfig;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.annotations.VisibleForTesting;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -204,7 +205,6 @@ public class BulkManager implements Runnable {
     }
 
     /**
-     *
      * Gets the data from Kafka.
      * @param buffer the items for the current bulk upload
      * @return the updated StringBuilder
@@ -218,13 +218,43 @@ public class BulkManager implements Runnable {
             return false;
         }
 
+        String message = cd.getMessage();
+
+        if (!isValidJsonObject(message)) {
+            // TODO mark message dropped
+            return false;
+        }
+
         if (buffer.length() > 0) {
             buffer.append("\r\n");
         }
 
         metrics.readKafkaItemFromConsumer.mark();
-        buffer.append(cd.getMessage());
+        buffer.append(message);
         return true;
+    }
+
+    /**
+     * Checks if the message is a valid JSON object.
+     * @param message the message to convert
+     * @return true if valid, fals if not
+     */
+    private boolean isValidJsonObject(final String message) {
+
+        if (message.trim().length() == 0) {
+            return false;
+        }
+
+        ObjectMapper mapper = new ObjectMapper();
+        Boolean isValid;
+        try {
+            isValid = mapper.readTree(message).isObject();
+        } catch (IOException e) {
+            log.debug("Error thrown converting message to JSON : {}", e.getMessage());
+            return false;
+        }
+
+        return isValid;
     }
 
     /**
