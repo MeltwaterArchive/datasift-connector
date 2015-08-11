@@ -1,0 +1,31 @@
+{
+    "kafka": {
+        "topic": "twitter",
+        "servers": "localhost:6667",
+        "retry-backoff": 1000,
+        "reconnect-backoff": 1000
+    },
+    "twitterapi": {
+        "consumer_key": "KEY",
+        "consumer_secret": "SECRET",
+        "access_token": "TOKEN",
+        "access_secret": "SECRET",
+        "keywords": [
+            "datasift"
+        ],
+        "user_ids": [
+            155505157
+        ]
+    },
+    "hosebird": {
+        "retries": 10,
+        "buffer_size": 10000,
+        "buffer_timeout": 500
+    },
+    "metrics": {
+        "host": "localhost",
+        "port": 8125,
+        "prefix": "hosebird.reader",
+        "reporting-time": 1
+    }
+}

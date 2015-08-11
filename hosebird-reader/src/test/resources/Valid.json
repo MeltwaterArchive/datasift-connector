@@ -1,0 +1,19 @@
+{
+  "kafka": {
+    "topic": "twitter-gnip",
+    "servers": "localhost:9092",
+    "retry-backoff": 1001,
+    "reconnect-backoff": 1002
+  },
+  "hosebird": {
+    "retries": 10,
+    "buffer_size": 10000,
+    "buffer_timeout": 500
+  },
+  "metrics": {
+    "host": "HOST",
+    "port": 24,
+    "prefix": "PREFIX",
+    "reporting-time": 1
+  }
+}
