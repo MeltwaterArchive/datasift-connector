@@ -49,6 +49,13 @@ template '/etc/datasift/historics-reader/reader.json' do
   action :create_if_missing
 end
 
+directory '/etc/cron.d' do
+  owner 'root'
+  group 'historicsreader'
+  mode '0775'
+  action :create
+end
+
 cron_d 'historics-reader-cron' do
   minute  '*/5'
   command 'java -cp "/etc/datasift/*:/etc/datasift/:'\
