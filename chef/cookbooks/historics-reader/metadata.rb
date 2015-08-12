@@ -8,3 +8,4 @@ version          '0.1.0'
 
 depends 'supervisor', '= 0.4.12'
 depends 'java', '~> 1.31.0'
+depends 'cron', '~> 1.6.1'

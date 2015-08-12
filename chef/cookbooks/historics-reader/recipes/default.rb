@@ -10,28 +10,28 @@ end
 
 require 'octokit'
 
-local_dir = node['writer']['local_dir']
+local_dir = node['historics-reader']['local_dir']
 
 # Allow install from a local file, useful for testing
 execute "find #{local_dir} -name 'historics-reader*.rpm' " \
         '| sort | tail -n1 |' \
         " xargs -I '{}' cp {} #{Chef::Config[:file_cache_path]}" \
-        '/datasift-writer-latest.rpm' do
+        '/historics-reader-latest.rpm' do
   only_if { Dir.glob("#{local_dir}historics-reader*.rpm").any? }
 end
 
 # Usually want to get from Github releases
-remote_file "#{Chef::Config[:file_cache_path]}/datasift-writer-latest.rpm" do
+remote_file "#{Chef::Config[:file_cache_path]}/historics-reader-latest.rpm" do
   source lazy {
-    release = Octokit.latest_release(node['writer']['repo'])
-    asset = release.assets.select { |r| r.name.match(/^datasift-writer/) }
+    release = Octokit.latest_release(node['historics-reader']['repo'])
+    asset = release.assets.select { |r| r.name.match(/^historics-reader/) }
     asset[0].browser_download_url
   }
   action :create
   not_if { Dir.glob("#{local_dir}historics-reader*.rpm").any? }
 end
 
-rpm_package 'datasift-writer' do
+rpm_package 'historics-reader' do
   source "#{Chef::Config[:file_cache_path]}/historics-reader-latest.rpm"
   action :install
 end
@@ -45,7 +45,7 @@ directory '/etc/datasift/historics-reader' do
 end
 
 template '/etc/datasift/historics-reader/reader.json' do
-  owner 'writer'
+  owner 'historicsreader'
   action :create_if_missing
 end
 

@@ -25,53 +25,53 @@ directory '/usr/lib/datasift/historics-api/lib' do
 end
 
 directory '/var/log/datasift' do
-  owner 'historics-reader'
+  owner 'historicsapi'
   mode '0777'
   action :create
 end
 
-template '/usr/lib/datasift/historics-api/config.json' do
+template '/usr/lib/datasift/historics-api/config.js' do
   owner 'historicsapi'
   action :create_if_missing
 end
 
 cookbook_file 'historics.js' do
   path '/usr/lib/datasift/historics-api/controllers/historics.js'
-  owner 'historics-api'
-  group 'historics-api'
+  owner 'historicsapi'
+  group 'historicsapi'
 end
 
 cookbook_file 'jobs.js' do
   path '/usr/lib/datasift/historics-api/lib/jobs.js'
-  owner 'historics-api'
-  group 'historics-api'
+  owner 'historicsapi'
+  group 'historicsapi'
 end
 
 cookbook_file 'utils.js' do
   path '/usr/lib/datasift/historics-api/lib/utils.js'
-  owner 'historics-api'
-  group 'historics-api'
+  owner 'historicsapi'
+  group 'historicsapi'
 end
 
 cookbook_file 'server.js' do
   path '/usr/lib/datasift/historics-api/server.js'
-  owner 'historics-api'
-  group 'historics-api'
+  owner 'historicsapi'
+  group 'historicsapi'
 end
 
 cookbook_file 'db.sqlite' do
   path '/usr/lib/datasift/historics-api/db.sqlite'
-  owner 'historics-api'
-  group 'historics-api'
+  owner 'historicsapi'
+  group 'historicsapi'
 end
 
 cookbook_file 'package.json' do
   path '/usr/lib/datasift/historics-api/package.json'
-  owner 'historics-api'
-  group 'historics-api'
+  owner 'historicsapi'
+  group 'historicsapi'
 end
 
-execute "npm-install-app" do
+execute 'npm-install-app' do
   cwd '/usr/lib/datasift/historics-api'
   command 'npm install > npm-run.log 2>&1'
   user node['nodejs']['historicsapi']
@@ -80,7 +80,7 @@ end
 
 supervisor_service 'historics-api' do
   user 'historicsapi'
-  command 'node /usr/lib/datasift/historics/server.js'
-  directory '/usr/lib/datasift/historics'
+  command 'node /usr/lib/datasift/historics-api/server.js'
+  directory '/usr/lib/datasift/historics-api'
   autostart true
 end
