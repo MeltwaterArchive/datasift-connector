@@ -191,6 +191,26 @@ describe 'historics-api::default' do
     it { should be_running.under('supervisor') }
   end
 
+  describe file('/usr/lib/datasift/historics-api/server.js') do
+    it { should exist }
+  end
+
+  describe file('/usr/lib/datasift/historics-api/lib/jobs.js') do
+    it { should exist }
+  end
+
+  describe file('/usr/lib/datasift/historics-api/lib/utils.js') do
+    it { should exist }
+  end
+
+  describe file('/usr/lib/datasift/historics-api/controllers/historics.js') do
+    it { should exist }
+  end
+
+  describe file('/usr/lib/datasift/historics-api/db.sqlite.js') do
+    it { should exist }
+  end
+
 end
 
 describe 'webapp::default' do
