@@ -1,0 +1,10 @@
+name             'historics-api'
+maintainer       'The Authors'
+maintainer_email 'you@example.com'
+license          'all_rights'
+description      'Installs/Configures historics api components'
+long_description 'Installs/Configures historics api components'
+version          '0.1.0'
+
+depends 'supervisor', '= 0.4.12'
+depends 'nodejs', '~> 2.4.0'

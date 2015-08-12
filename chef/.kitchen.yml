@@ -11,6 +11,7 @@ driver:
     - 8086 # InfluxDB
     - 8090 # InfluxDB
     - 8125 # StatsD
+    - 8888 # Historics API
 
 provisioner:
   name: chef_zero
@@ -29,6 +30,8 @@ suites:
       - recipe[webapp]
       - recipe[datasift-writer]
       - recipe[gnip-reader]
+      - recipe[historics-api]
+      - recipe[historics-reader]
     attributes:
       kafka:
         ulimit_file: 128000

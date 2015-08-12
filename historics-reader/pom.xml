@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>connector</artifactId>
+        <groupId>com.datasift.connector</groupId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>historics-reader</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20140107</version>
+        </dependency>
+        <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>3.8.11.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>fluent-hc</artifactId>
+            <version>4.5</version>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <version>2.1-alpha-4</version>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>rpm-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>attached-rpm</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <requires>
+                        <require>java-1.7.0-openjdk</require>
+                    </requires>
+                    <needarch>noarch</needarch>
+                    <targetOS>linux</targetOS>
+                    <group>Services/historics-reader</group>
+                    <!--copyright required to avoid error message "error: License field must be present in package: (main package)"-->
+                    <copyright>DataSift - All rights reserved</copyright>
+                    <defaultGroupname>historics_reader</defaultGroupname>
+                    <defaultUsername>historics_reader</defaultUsername>
+                    <mappings>
+                        <mapping>
+                            <filemode>755</filemode>
+                            <directory>/usr/lib/datasift/${project.artifactId}</directory>
+                            <artifact/>
+                            <dependency/>
+                        </mapping>
+                        <mapping>
+                            <configuration>true</configuration>
+                            <directory>/etc/datasift/${project.artifactId}</directory>
+                            <filemode>755</filemode>
+                            <configuration>noreplace</configuration>
+                            <sources>
+                                <source>
+                                    <location>src/main/resources</location>
+                                    <includes>
+                                        <include>*.json</include>
+                                        <include>*.properties</include>
+                                    </includes>
+                                </source>
+                            </sources>
+                        </mapping>
+                    </mappings>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

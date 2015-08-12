@@ -151,6 +151,68 @@ describe 'gnip-reader::default' do
 
 end
 
+describe 'historics-api::default' do
+
+  describe package('historics-reader') do
+    it { should be_installed }
+  end
+
+  describe user('historicsreader') do
+    it { should exist }
+  end
+
+  describe file('/usr/lib/datasift/historics-reader/reader.json') do
+    it { should be_owned_by 'historicsreader' }
+    its(:md5sum) { should eq 'd979264965d687f60c08e1b58c075d34' }
+  end
+
+end
+
+describe 'historics-api::default' do
+
+  describe package('nodejs') do
+    it { should be_installed }
+  end
+
+  describe package('historics') do
+    it { should be_installed }
+  end
+
+  describe user('historicsapi') do
+    it { should exist }
+  end
+
+  describe file('/usr/lib/datasift/historics-api/config.json') do
+    it { should be_owned_by 'historicsapi' }
+    its(:md5sum) { should eq '3a5e37ad317a5ad0ddc3abc2f9ab3f6b' }
+  end
+
+  describe service('historics-api') do
+    it { should be_running.under('supervisor') }
+  end
+
+  describe file('/usr/lib/datasift/historics-api/server.js') do
+    it { should exist }
+  end
+
+  describe file('/usr/lib/datasift/historics-api/lib/jobs.js') do
+    it { should exist }
+  end
+
+  describe file('/usr/lib/datasift/historics-api/lib/utils.js') do
+    it { should exist }
+  end
+
+  describe file('/usr/lib/datasift/historics-api/controllers/historics.js') do
+    it { should exist }
+  end
+
+  describe file('/usr/lib/datasift/historics-api/db.sqlite.js') do
+    it { should exist }
+  end
+
+end
+
 describe 'webapp::default' do
 
   describe package('nodejs') do
