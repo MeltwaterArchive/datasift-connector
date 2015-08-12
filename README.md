@@ -235,6 +235,37 @@ Example:
 }
 ```
 
+### Historics Reader
+
+The Historics Reader configuration file is located at `/etc/datasift/historics-reader/reader.json` when deployed using the included Chef recipe.
+
+Example:
+
+```json
+{
+  "database": {
+    "filepath": "/usr/lib/datasift/historics-api/db.sqlite"
+  },
+  "gnip": {
+    "base_url": "https://historical.gnip.com",
+    "port": 443,
+    "account_name": "gnip-account"
+  },
+  "kafka": {
+    "topic": "twitter",
+    "servers": "localhost:6667",
+    "retry-backoff": 1000,
+    "reconnect-backoff": 1000
+  },
+  "metrics": {
+    "host": "localhost",
+    "port": 8125,
+    "prefix": "historics.reader",
+    "reporting-time": 1
+  }
+}
+```
+
 ## Troubleshooting
 
 ### Logging
