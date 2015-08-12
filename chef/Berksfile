@@ -17,3 +17,4 @@ cookbook 'kafka',
 cookbook 'influxdb',
          git: 'https://github.com/datasift/chef-influxdb.git',
          ref: '232e2afd4afb29b6eecb3369de84f1674272cd59'
+cookbook 'cron', '~> 1.6.1'

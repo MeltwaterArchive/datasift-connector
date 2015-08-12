@@ -151,7 +151,24 @@ describe 'gnip-reader::default' do
 
 end
 
-describe 'historics::default' do
+describe 'historics-api::default' do
+
+  describe package('historics-reader') do
+    it { should be_installed }
+  end
+
+  describe user('historicsreader') do
+    it { should exist }
+  end
+
+  describe file('/usr/lib/datasift/historics-reader/reader.json') do
+    it { should be_owned_by 'historicsreader' }
+    its(:md5sum) { should eq 'd979264965d687f60c08e1b58c075d34' }
+  end
+
+end
+
+describe 'historics-api::default' do
 
   describe package('nodejs') do
     it { should be_installed }
@@ -161,20 +178,18 @@ describe 'historics::default' do
     it { should be_installed }
   end
 
-  describe user('historics') do
+  describe user('historicsapi') do
     it { should exist }
   end
 
-  describe file('/usr/lib/datasift/historics/config.json') do
-    it { should be_owned_by 'historics' }
+  describe file('/usr/lib/datasift/historics-api/config.json') do
+    it { should be_owned_by 'historicsapi' }
     its(:md5sum) { should eq 'd68eb95800890cbe463d102441195532' }
   end
 
   describe service('historics-api') do
     it { should be_running.under('supervisor') }
   end
-
-
 
 end
 

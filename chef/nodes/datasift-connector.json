@@ -25,7 +25,8 @@
     "recipe[datasift-writer]",
     "recipe[gnip-reader]",
     "recipe[twitterapi-reader]",
-    "recipe[historics]",
+    "recipe[historics-api]",
+    "recipe[historics-reader]",
     "recipe[webapp]"
   ]
 }
