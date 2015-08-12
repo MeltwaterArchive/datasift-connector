@@ -46,7 +46,7 @@ describe 'datasift-stats::default' do
 
   describe file('/var/lib/grafana/grafana.db') do
     it { should be_file }
-    its(:md5sum) { should eq 'bd94e374df06347ba77770ba59ed0fd9' }
+    its(:md5sum) { should eq '970175db812f0014c22e6762045bb186' }
     it { should be_owned_by 'grafana' }
     it { should be_grouped_into 'grafana' }
     it { should be_readable }
@@ -151,7 +151,7 @@ describe 'gnip-reader::default' do
 
 end
 
-describe 'historics-api::default' do
+describe 'historics-reader::default' do
 
   describe package('historics-reader') do
     it { should be_installed }
@@ -161,9 +161,9 @@ describe 'historics-api::default' do
     it { should exist }
   end
 
-  describe file('/usr/lib/datasift/historics-reader/reader.json') do
+  describe file('/etc/datasift/historics-reader/reader.json') do
     it { should be_owned_by 'historicsreader' }
-    its(:md5sum) { should eq 'd979264965d687f60c08e1b58c075d34' }
+    its(:md5sum) { should eq 'b4d65791d2db8ee48a05b41b9260942e' }
   end
 
 end
@@ -174,15 +174,11 @@ describe 'historics-api::default' do
     it { should be_installed }
   end
 
-  describe package('historics') do
-    it { should be_installed }
-  end
-
   describe user('historicsapi') do
     it { should exist }
   end
 
-  describe file('/usr/lib/datasift/historics-api/config.json') do
+  describe file('/usr/lib/datasift/historics-api/config.js') do
     it { should be_owned_by 'historicsapi' }
     its(:md5sum) { should eq '3a5e37ad317a5ad0ddc3abc2f9ab3f6b' }
   end
@@ -207,7 +203,7 @@ describe 'historics-api::default' do
     it { should exist }
   end
 
-  describe file('/usr/lib/datasift/historics-api/db.sqlite.js') do
+  describe file('/usr/lib/datasift/historics-api/db.sqlite') do
     it { should exist }
   end
 
