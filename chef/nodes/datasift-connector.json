@@ -24,6 +24,9 @@
     "recipe[datasift-kafka]",
     "recipe[datasift-writer]",
     "recipe[gnip-reader]",
+    "recipe[twitterapi-reader]",
+    "recipe[historics-api]",
+    "recipe[historics-reader]",
     "recipe[webapp]"
   ]
 }

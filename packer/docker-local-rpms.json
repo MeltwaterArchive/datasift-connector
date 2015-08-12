@@ -21,6 +21,14 @@
       "destination": "/tmp/gnip-reader-latest.noarch.rpm"
     },{
       "type": "file",
+      "source": "{{pwd}}/historics-reader-latest.noarch.rpm",
+      "destination": "/tmp/historics-reader-latest.noarch.rpm"
+    },{
+      "type": "file",
+      "source": "{{pwd}}/twitterapi-reader-latest.noarch.rpm",
+      "destination": "/tmp/twitterapi-reader-latest.noarch.rpm"
+    },{
+      "type": "file",
       "source": "{{pwd}}/../chef/nodes/datasift-connector.json",
       "destination": "/tmp/datasift-connector.json"
     },{
@@ -39,6 +47,9 @@
         "recipe[datasift-stats]",
         "recipe[datasift-kafka]",
         "recipe[datasift-writer]",
-        "recipe[gnip-reader]"
+        "recipe[gnip-reader]",
+        "recipe[twitterapi-reader]",
+        "recipe[historics-api]",
+        "recipe[historics-reader]"
     ]}]
 }

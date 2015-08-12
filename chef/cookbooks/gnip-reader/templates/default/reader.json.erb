@@ -1,6 +1,6 @@
 {
     "kafka": {
-        "topic": "twitter-gnip",
+        "topic": "twitter",
         "servers": "localhost:6667",
         "retry-backoff": 1000,
         "reconnect-backoff": 1000
@@ -11,7 +11,9 @@
         "product": "PRODUCT",
         "username": "USER",
         "password": "PASSWORD",
-        "host": "https://stream.gnip.com",
+        "host": "https://stream.gnip.com"
+    },
+    "hosebird" : {
         "retries": 10,
         "buffer_size": 10000,
         "buffer_timeout": 500
@@ -19,7 +21,7 @@
     "metrics": {
         "host": "localhost",
         "port": 8125,
-        "prefix": "gnip.reader",
+        "prefix": "hosebird.reader",
         "reporting-time": 1
     }
 }

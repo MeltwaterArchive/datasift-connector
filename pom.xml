@@ -28,8 +28,11 @@
     </properties>
 
     <modules>
+        <module>hosebird-reader</module>
         <module>gnip-reader</module>
+        <module>twitterapi-reader</module>
         <module>datasift-writer</module>
+        <module>historics-reader</module>
     </modules>
 
     <organization>
@@ -212,6 +215,12 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.7.4.201502262128</version>
+                <configuration>
+                    <excludes>
+                        <exclude>historics-reader/**</exclude>
+                        <exclude>historics-api/**</exclude>
+                    </excludes>
+                </configuration>
                 <executions>
                     <execution>
                         <id>default-prepare-agent</id>

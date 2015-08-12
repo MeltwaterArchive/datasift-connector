@@ -23,8 +23,7 @@ To run an instance of the connector on EC2:
 - `cd packer`
 - `./build.sh [AWS_ACCESS_KEY] [AWS_SECRET_KEY]`
 - Once the Packer build has finished log on to your AWS dashboard, select the EC2 service and then click `AMIs`.
-- Launch an instance of the built AMI using the standard EC2 mechanism.
-- *We recommend you start with a 'small' instance size - this is more than adequate for most uses*
+- Launch an instance of the built AMI using the standard EC2 mechanism. Read [our wiki article](https://github.com/datasift/datasift-connector/wiki/Can-I-deploy-the-DataSift-Connector-to-an-existing-EC2-instance%3F) for information about why we recommend launching a new EC2 instance, rather than using an existing one.
 
 After launching an instance, you'll next need to configure it:
 
@@ -45,6 +44,13 @@ To run a local instance of the connector do the following:
 - Ensure [Vagrant](#vagrant) and relevant plug-ins are installed.
 - Ensure a stable version of [VirtualBox](https://www.virtualbox.org) is installed.
 - `vagrant up`
+- If prompted, choose to bridge to a network adapter with internet access.
+
+Once the provisioning process has completed chef should report success, printing a log message similar to:
+
+`INFO: Chef Run complete in 100.00 seconds`
+
+If errors are encountered during provisioning, you may find a solution in [troubleshooting](#troubleshooting)
 
 After launching an instance, you'll next need to configure it:
 
@@ -91,7 +97,7 @@ To give some context, the first diagram below shows where this connector fits in
 
 The connector contains three main parts: a reader, a buffer, and a writer:
 
-* The Gnip Reader will connect to the Gnip streaming API and pass the data received in to the buffer.
+* The Gnip Reader or Twitter API Reader will connect to the Gnip/Twitter streaming API and pass the data received in to the buffer.
 * The buffer is there to prevent data loss should there be an issue with the connection to the DataSift Data Ingestion API. One item in the queue is expected to be a single piece of data, i.e. a tweet, retweet, delete, etc.
 * The DataSift Writer handles connecting to the DataSift Data Ingestion API and will send the data it pulls out of the buffer up to the DataSift platform.
 
@@ -115,13 +121,15 @@ Example:
     "product": "PRODUCT",
     "username": "USER",
     "password": "PASSWORD",
-    "host": "https://stream.gnip.com",
+    "host": "https://stream.gnip.com"
+  },
+  "hosebird": {
     "retries": 10,
     "buffer_size": 10000,
     "buffer_timeout": 500
   },
   "kafka": {
-    "topic": "twitter-gnip",
+    "topic": "twitter",
     "servers": "localhost:6667",
     "retry-backoff": 1000,
     "reconnect-backoff": 1000
@@ -129,13 +137,55 @@ Example:
   "metrics": {
     "host": "localhost",
     "port": 8125,
-    "prefix": "gnip.reader",
+    "prefix": "hosebird.reader",
     "reporting-time": 1
   }
 }
 ```
 
 The important part is the `gnip` section. This is where you specify your Gnip API credentials that will enable the reader to connect to Gnip and receive data.
+
+### Twitter API Reader
+
+The Twitter API configuration file is located at `/etc/datasift/twitterapi-reader/reader.json` when deployed using the included chef recipe.
+
+Example:
+
+```json
+{
+    "twitterapi": {
+        "consumer_key": "KEY",
+        "consumer_secret": "SECRET",
+        "access_token": "TOKEN",
+        "access_secret": "SECRET",
+        "keywords": [
+            "datasift"
+        ],
+        "user_ids": [
+            155505157
+        ]
+    },
+    "hosebird": {
+        "retries": 10,
+        "buffer_size": 10000,
+        "buffer_timeout": 500
+    },
+    "kafka": {
+        "topic": "twitter",
+        "servers": "localhost:6667",
+        "retry-backoff": 1000,
+        "reconnect-backoff": 1000
+    },
+    "metrics": {
+        "host": "localhost",
+        "port": 8125,
+        "prefix": "hosebird.reader",
+        "reporting-time": 1
+    }
+}
+```
+
+At least one of either `keywords` or `user_ids` must be used.
 
 ### DataSift Writer
 

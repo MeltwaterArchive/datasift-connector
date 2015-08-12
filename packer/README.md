@@ -2,6 +2,7 @@
 
 See [Packer](https://www.packer.io/docs) for more details on using Packer. These configuration files have been tested with Packer 0.8.
 
+Please note, at this time we do not advise building a docker image for use in production. See Issue #31.
 
 ## Building
 
@@ -15,7 +16,7 @@ To build images using local versions of the components rather than the latest re
 
 `$ ./build.sh [AWS access key] [AWS secret key] ami-local-rpms.json`
 
-ensuring that the rpms are in the `./packer/` directory and are named `gnip-reader-latest.noarch.rpm` and `datasift-writer-latest.noarch.rpm`.
+ensuring that the rpms are in the `./packer/` directory and are named `gnip-reader-latest.noarch.rpm`, `datasift-writer-latest.noarch.rpm`, `historics-reader-latest.noarch.rpm` and `twitterapi-reader-latest.noarch.rpm`.
 
 It is also possible to build docker images using the scripts `docker.json` and `docker-local-rpms.json`. In the future it would be nice to resolve the differences in these and the ami files, create a single packer file to build both and allow packer to build them in parallel.
 

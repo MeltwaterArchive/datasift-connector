@@ -1,0 +1,40 @@
+{
+    "name": "historics-reader",
+    "description": "A reader component for the DataSift Connector that gets data from the Gnip Historic PowerTrack API",
+    "version": "0.0.1",
+    "homepage": "http://github.com/datasift/datasift-connector",
+    "author": {
+        "name": "DataSift",
+        "url": "http://datasift.com/"
+    },
+    "contributors": [
+        "Stuart Dallas <stuart.dallas@datasift.com>",
+        "Andrew Slack <andrew.slack@datasift.com>"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/datasift/datasift-connector.git"
+    },
+    "dependencies": {
+        "restify": "~2",
+        "sqlite3": "~3",
+        "log4js": "~0.6",
+        "kafka-node": "0.2.27",
+        "event-stream": "3.3.1",
+        "async": "1.4.0",
+        "sync": "0.2.5",
+	"http-sync": "0.1.2"
+    },
+    "devDependencies": {
+        "mocha": "1.x"
+    },
+    "scripts": {
+        "start": "node ./server.js",
+        "test": "mocha -R spec --timeout 480000"
+    },
+    "licenses": [
+        {
+            "type": "MIT"
+        }
+    ]
+}

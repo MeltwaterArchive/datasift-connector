@@ -420,18 +420,32 @@ public class TestBulkManager {
     public void getDataFromKafka_should_return_just_item_if_buffer_empty() {
         SimpleConsumerManager scm = mock(SimpleConsumerManager.class);
         ConsumerData cd = mock(ConsumerData.class);
-        when(cd.getMessage()).thenReturn("DATA");
+        when(cd.getMessage()).thenReturn("{\"DATA\":\"1\"}");
         when(scm.readItem()).thenReturn(cd);
         Metrics metrics = new Metrics();
         BulkManager bm = new BulkManager(null, scm, null, metrics);
         StringBuilder sb = new StringBuilder();
         assertTrue(bm.getDataFromKafka(sb));
-        assertEquals("DATA", sb.toString());
+        assertEquals("{\"DATA\":\"1\"}", sb.toString());
         assertEquals(1, metrics.readKafkaItemFromConsumer.getCount());
     }
 
     @Test
     public void getDataFromKafka_should_concatenate_item_to_not_empty_stringbuilder() {
+        SimpleConsumerManager scm = mock(SimpleConsumerManager.class);
+        ConsumerData cd = mock(ConsumerData.class);
+        when(cd.getMessage()).thenReturn("{\"DATA\":\"1\"}");
+        when(scm.readItem()).thenReturn(cd);
+        Metrics metrics = new Metrics();
+        BulkManager bm = new BulkManager(null, scm, null, metrics);
+        StringBuilder sb = new StringBuilder();
+        sb.append("EXISTING");
+        assertTrue(bm.getDataFromKafka(sb));
+        assertEquals("EXISTING\r\n{\"DATA\":\"1\"}", sb.toString());
+    }
+
+    @Test
+    public void getDataFromKafka_should_drop_message_that_is_not_a_json_object() {
         SimpleConsumerManager scm = mock(SimpleConsumerManager.class);
         ConsumerData cd = mock(ConsumerData.class);
         when(cd.getMessage()).thenReturn("DATA");
@@ -440,8 +454,8 @@ public class TestBulkManager {
         BulkManager bm = new BulkManager(null, scm, null, metrics);
         StringBuilder sb = new StringBuilder();
         sb.append("EXISTING");
-        assertTrue(bm.getDataFromKafka(sb));
-        assertEquals("EXISTING\r\nDATA", sb.toString());
+        assertFalse(bm.getDataFromKafka(sb));
+        assertEquals("EXISTING", sb.toString());
     }
 
     @Test
@@ -461,7 +475,7 @@ public class TestBulkManager {
         SimpleConsumerManager scm = mock(SimpleConsumerManager.class);
         Metrics metrics = new Metrics();
         ConsumerData cd = mock(ConsumerData.class);
-        when(cd.getMessage()).thenReturn("ONE").thenReturn("TWO");
+        when(cd.getMessage()).thenReturn("{\"ONE\":\"1\"}").thenReturn("{\"TWO\":\"2\"}");
         when(scm.readItem()).thenReturn(cd).thenReturn(cd).thenReturn(null);
         Logger log = mock(Logger.class);
         DataSiftConfig config = new DataSiftConfig();
@@ -477,14 +491,14 @@ public class TestBulkManager {
         long after = System.nanoTime();
 
         assertTrue(after - before >= TimeUnit.MILLISECONDS.toNanos(config.bulkInterval));
-        assertEquals("ONE\r\nTWO", data);
+        assertEquals("{\"ONE\":\"1\"}\r\n{\"TWO\":\"2\"}", data);
     }
 
     @Test
     public void read_should_read_for_configured_items() {
         SimpleConsumerManager scm = mock(SimpleConsumerManager.class);
         ConsumerData cd = mock(ConsumerData.class);
-        when(cd.getMessage()).thenReturn("ONE").thenReturn("TWO");
+        when(cd.getMessage()).thenReturn("{\"ONE\":\"1\"}").thenReturn("{\"TWO\":\"2\"}");
         when(scm.readItem()).thenReturn(cd).thenReturn(cd).thenReturn(null);
         Logger log = mock(Logger.class);
         Metrics metrics = new Metrics();
@@ -498,7 +512,7 @@ public class TestBulkManager {
 
         String data = bm.read().getData();
 
-        assertEquals("ONE\r\nTWO", data);
+        assertEquals("{\"ONE\":\"1\"}\r\n{\"TWO\":\"2\"}", data);
         assertEquals(1, metrics.readKafkaItemsFromConsumer.getCount());
         assertEquals(2, metrics.readKafkaItemFromConsumer.getCount());
     }
@@ -507,13 +521,13 @@ public class TestBulkManager {
     public void read_should_read_for_configured_size() {
         SimpleConsumerManager scm = mock(SimpleConsumerManager.class);
         ConsumerData cd = mock(ConsumerData.class);
-        when(cd.getMessage()).thenReturn("ONE").thenReturn("TWO");
+        when(cd.getMessage()).thenReturn("{\"ONE\":\"1\"}").thenReturn("{\"TWO\":\"2\"}");
         when(scm.readItem()).thenReturn(cd).thenReturn(cd).thenReturn(null);
         Logger log = mock(Logger.class);
         Metrics metrics = new Metrics();
         DataSiftConfig config = new DataSiftConfig();
         config.bulkInterval = 999999999;
-        config.bulkSize = 4;
+        config.bulkSize = 14;
         config.bulkItems = 99999999;
 
         BulkManager bm = new BulkManager(config, scm, null, metrics);
@@ -521,7 +535,7 @@ public class TestBulkManager {
 
         String data = bm.read().getData();
 
-        assertEquals("ONE\r\nTWO", data);
+        assertEquals("{\"ONE\":\"1\"}\r\n{\"TWO\":\"2\"}", data);
         assertEquals(1, metrics.readKafkaItemsFromConsumer.getCount());
         assertEquals(2, metrics.readKafkaItemFromConsumer.getCount());
     }
@@ -530,7 +544,7 @@ public class TestBulkManager {
     public void read_should_log_items_read() {
         SimpleConsumerManager scm = mock(SimpleConsumerManager.class);
         ConsumerData cd = mock(ConsumerData.class);
-        when(cd.getMessage()).thenReturn("ONE").thenReturn("TWO");
+        when(cd.getMessage()).thenReturn("{\"ONE\":\"1\"}").thenReturn("{\"TWO\":\"2\"}");
         when(scm.readItem()).thenReturn(cd).thenReturn(cd).thenReturn(null);
         Logger log = mock(Logger.class);
         Metrics metrics = new Metrics();

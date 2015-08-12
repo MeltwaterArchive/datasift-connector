@@ -1,13 +1,14 @@
 package com.datasift.connector;
 
 import com.datasift.connector.reader.Messages;
+import org.junit.Assert;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class TestMessages {
     @Test
     public void should_have_correct_messages() {
-        assertEquals(
+        Assert.assertEquals(
                 "Error parsing config provided. Configuration file must"
                         + " be valid JSON & adhere to format set in configuration"
                         + " documentation",
