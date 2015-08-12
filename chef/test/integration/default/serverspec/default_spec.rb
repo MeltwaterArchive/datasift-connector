@@ -184,7 +184,7 @@ describe 'historics-api::default' do
 
   describe file('/usr/lib/datasift/historics-api/config.json') do
     it { should be_owned_by 'historicsapi' }
-    its(:md5sum) { should eq 'd68eb95800890cbe463d102441195532' }
+    its(:md5sum) { should eq '3a5e37ad317a5ad0ddc3abc2f9ab3f6b' }
   end
 
   describe service('historics-api') do
