@@ -1,5 +1,6 @@
 var http = require('http'),
 	https = require('https'),
+	httpSync = require('http-sync'),
 	logger = require('log4js').getLogger('historics-gnip-api');
 
 function Gnip(config) {
@@ -12,57 +13,23 @@ function Gnip(config) {
 Gnip.prototype.getJob = function(job_id, next) {
 	var options = {
 		host: this._domain,
-		path: '/accounts/' + this._account_name + '/publishers/twitter/historical/track/jobs/' + job_id + '.json',
-		port: this._port
+		path: '\/accounts\/' + this._account_name + '\/publishers\/twitter\/historical\/track\/jobs\/' + job_id + '.json',
+		port: this._port,
+		protocol: this._use_ssl
 		//headers: {'custom': 'Custom Header Demo works'}
 	}
 
-	if (this._use_ssl) {
-		var req = https.request(options, function (response) {
-			var str = ''
-			response.on('data', function (chunk) {
-				str += chunk;
-			});
-
-			response.on('end', function () {
-				next(err, JSON.parse(str))
-			});
-
-			response.on('error', function(err) {
-				logger.error('Error encountered during response parsing of GNIP API status request for job ' + job_id + ': ' + err)
-				next(err)
-			})
+		var req = httpSync.request(options)
+		var timedout = false;
+		req.setTimeout(10, function() {
+			console.log("Request timed out!");
+			timedout = true;
 		});
-
-		req.on('error', function(err) {
-			logger.error('Error encountered during GNIP API status request for job ' + job_id + ': ' + err)
-			next(err)
-		});
-
 		req.end();
-	} else {
-		var req = http.request(options, function (response) {
-			var str = ''
-			response.on('data', function (chunk) {
-				str += chunk;
-			});
 
-			response.on('end', function () {
-				next(err, JSON.parse(str))
-			});
-
-			response.on('error', function(err) {
-				logger.error('Error encountered during response parsing of GNIP API status request for job ' + job_id + ': ' + err)
-				next(err)
-			})
-		});
-
-		req.on('error', function(err) {
-			logger.error('Error encountered during GNIP API status request for job ' + job_id + ': ' + err)
-			next(err)
-		});
-
-		req.end();
+	if (!timedout) {
+		console.log(response);
+		console.log(response.body.toString());
 	}
 }
 
@@ -122,3 +89,5 @@ Gnip.prototype.getJobResults = function(job_id, next) {
 		req.end();
 	}
 }
+
+module.exports = Gnip

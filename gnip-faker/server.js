@@ -145,7 +145,7 @@ var handleStreamingConnection = function(req, res) {
 }
 
 var server = http.createServer(function (req, res) {
-	if (req.url.indexOf('result.json', req.url.length - 'result.json'.length) !== -1) {
+	if (req.url.indexOf('results.json', req.url.length - 'results.json'.length) !== -1) {
 		handleGetJobResultRequest(req, res)
 	} else if (req.url.indexOf('/publishers/twitter/historical/track/jobs/') > -1) {
 		handleGetJobRequest(req, res)

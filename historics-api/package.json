@@ -22,7 +22,8 @@
         "kafka-node": "0.2.27",
         "event-stream": "3.3.1",
         "async": "1.4.0",
-        "sync": "0.2.5"
+        "sync": "0.2.5",
+	"http-sync": "0.1.2"
     },
     "devDependencies": {
         "mocha": "1.x"

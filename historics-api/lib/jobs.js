@@ -134,13 +134,16 @@ Jobs.prototype.getJobs = function(filters, next) {
 				sql += ' where status = $status'
 				params['$status'] = filters.status
 			} else if (filters.exclusion_status) {
-				sql += ' where status != $' + filter.exclusion_status[0]
-				params['$' + filter.exclusion_status[0]] = filter.exclusion_status[0]
-				if (filter.exclusion_status.length > 1) {
-					var otherExclusions = filter.exclusion_status.slice(1)
+				sql += ' where status != $' + filters.exclusion_status[0]
+				params['$' + filters.exclusion_status[0]] = filters.exclusion_status[0]
+				if (filters.exclusion_status.length > 1) {
+					var otherExclusions = filters.exclusion_status.slice(1)
 					for (var key in otherExclusions) {
-						sql += ' or status != $' + otherExclusions[key]
-						params['$' + otherExclusions[key]] = otherExclusions[key]
+						var val = otherExclusions[key]
+						if (typeof(val) != 'function') {
+							sql += ' or status != $' + otherExclusions[key]
+							params['$' + otherExclusions[key]] = otherExclusions[key]
+						}
 					}
 				}
 			}
@@ -329,6 +332,9 @@ Jobs.prototype.getJobLog = function(job_id, level, next) {
 						var retval = ''
 						if (err) {
 							logger.error('Jobs.getJobLog: ' + err)
+						} else if (!rows) {
+							err = 'Job not found'
+							logger.error('Jobs.getJobLog: [' + job_id + '] ' + err)
 						} else {
 							for (var key in rows) {
 								if (typeof(rows[key]) != 'function') {

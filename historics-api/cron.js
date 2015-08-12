@@ -17,49 +17,53 @@ var logger = require('log4js').getLogger('historics-reader'),
 logger.info('Historics processing script starting at timestamp: ' + utils.getCurrentTimestampMs())
 
 var jobs = new Jobs(config)
+var gnip = new Gnip(config)
 var urlsToProcess = 0
-var producer = kafka.Producer,
-    client = new kafka.Client(config.kafka.socket, config.kafka.clientId),
-    producer = new Producer(client);
+var client = new kafka.Client(config.zookeeper.socket, config.zookeeper.clientId),
+    producer = new kafka.Producer(client);
 
-producer.on('ready',function(){
+producer.on('ready', function(){
     logger.info("kafka producer is connected");
     readJobs()
 });
 
-producer.on('error',function(err){
-    log.error("Error initialising Kafka producer: " + err)
+producer.on('error', function(err){
+    log.error("Kafka producer encountered an error: " + err)
 });
 
 function readJobs() {
-    var filters = { status_exclusion: ['processing', 'done'] }
+    var filters = { exclusion_status: ['processing', 'done'] }
     jobs.getJobs(filters, function(err, rows) {
         if (err) logger.error('Could not retrieve status of jobs from sqlite db: ' + err)
-        else updateJobs(rows)
+        else updateJobs.sync(this, rows)
     });
 };
 
 function updateJobs(jobRows) {
     jobRows.forEach(function (jobItem) {
-        Sync(function () {
-            var status = fetchJobStatus.sync(jobItem.id, null)
-            if (status && (status != jobItem.status)) {
-                updateJobStatus.sync(jobItem.id, status, null)
-            }
+        var status
+        Sync(function() {
+            status = fetchJobStatus.sync(this, jobItem.id)
         })
+            if (status && (status != jobItem.status)) {
+                Sync(function() {
+                    updateJobStatus.sync(null, jobItem.id, status)
+                })
+            }
+
     });
     processJobs()
 };
 
 function fetchJobStatus(jobId, cb) {
-    Gnip.getJob(jobId, function(err, jsonData) {
+    gnip.getJob(jobId, function(err, jsonData) {
         if (err) logger.error('Could not retrieve status for job ' + jobId + ' from GNIP API. ' + err)
         else cb(jsonData.status)
     });
 }
 
-function updateJobStatus(jobId, status, cb) {
-    Jobs.updateJob(jobId, {status: status}, function(err, row) {
+function updateJobStatus(jobId, status) {
+    jobs.updateJob(jobId, {status: status}, function(err, row) {
         if (err) logger.error('Could not update status for job ' + jobId + ' to ' + status + '. ' + err)
         else cb()
     });
@@ -74,14 +78,14 @@ function processJobs() {
 
     ASync.whilst(function() { return currentJob !== null; },
         function() {
-            Jobs.updateJob(currentJob, {status: 'processing'}, function(err, row) {
+            jobs.updateJob(currentJob, {status: 'processing'}, function(err, row) {
                 if (err) logger.error('Could not update job ' + currentJob + ' status to processing. ' + err)
                 Sync(function() {
                     fetchJobResults.sync(currentJob)
-                    processFiles.sync(jobId)
-                    completeJob.sync(jobId)
+                    processFiles.sync(null, currentJob)
+                    completeJob.sync(null, currentJob)
 
-                    lockJob.sync(null)
+                    lockJob.sync(null, currentJob)
                     currentJob = getLockedJob.sync(null)
                 })
             })
@@ -93,14 +97,14 @@ function processJobs() {
 }
 
 function lockJob(cb) {
-    Jobs.lockJob(function(err) {
+    jobs.lockJob(jobId, function(err) {
         if (err) logger.error('Could not lock job ' + jobId + ' in sqlite db. ' + err)
         else cb()
     });
 };
 
-function getLockedJob(cb) {
-    Jobs.getLockedJob(function(err, row) {
+function getLockedJob(jobId, cb) {
+    jobs.getLockedJob(function(err, row) {
         if (err) {
             logger.error('Could not get locked job ' + jobId + ' in sqlite db. ' + err)
             cb(null, null)
@@ -112,20 +116,20 @@ function getLockedJob(cb) {
 };
 
 function fetchJobResults(jobId) {
-    Gnip.getJobResults(jobId, function(err, results) {
+    gnip.getJobResults(jobId, function(err, results) {
         if (err) logger.error('Could not retrieve job results for ' + jobId + '. ' + err)
         else updateJobResults()
     })
 };
 
 function updateJobResults(jobId, data) {
-    Gnip.updateJob(jobId, {urls: data.urls, suspect_minutes_url: data.suspectMinutesUrl}, null, function(err, row) {
+    jobs.updateJob(jobId, {urls: data.urls, suspect_minutes_url: data.suspectMinutesUrl}, null, function(err, row) {
         if (err) logger.error('Could not store the results URLs for job ' + jobId + '. ' + err)
     })
 };
 
 function processFiles(jobId) {
-    Jobs.getJob(jobId, function(err, row) {
+    jobs.getJob(jobId, function(err, row) {
         if (err) {
             logger.error('Could not read job ' + jobId + ' from database for URL processing. ' + err)
         }
@@ -235,4 +239,5 @@ function completeJob(jobId) {
 
 process.on('uncaughtException', function (err) {
     logger.error('Uncaught exception! ' + err)
+    process.exit(1)
 });
