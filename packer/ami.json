@@ -31,7 +31,8 @@
         "recipe[datasift-kafka]",
         "recipe[datasift-writer]",
         "recipe[gnip-reader]",
-        "recipe[historics]"
+        "recipe[historics-api]",
+        "recipe[historics-reader]"
     ]},{
       "type": "shell",
       "inline": [

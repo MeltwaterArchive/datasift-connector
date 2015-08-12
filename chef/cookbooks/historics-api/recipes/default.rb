@@ -63,6 +63,7 @@ cookbook_file 'db.sqlite' do
   path '/usr/lib/datasift/historics-api/db.sqlite'
   owner 'historicsapi'
   group 'historicsapi'
+  mode '666'
 end
 
 cookbook_file 'package.json' do
