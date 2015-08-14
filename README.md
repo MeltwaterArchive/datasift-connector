@@ -17,6 +17,12 @@ To deploy the connector or to work with it locally, you'll first need to clone t
 
 Please note that the connector has been developed and tested within CentOS 6.5. The source AMI in use by our ami.json packer configuration is [ami-c2a818aa](https://aws.amazon.com/marketplace/pp/B00NQAYLWO/ref=rev_all_product_title). The connector is not guaranteed to operate correctly when deployed using alternative source images.
 
+### Pricing
+
+The CentOS 6 source AMI used by the connector is a free product. Instance type when deployed with Packer is defaulted to t2.micro. This is a "Free Tier Eligible" instance type, and will reduce costs significantly when used within the first 12 months with a new AWS account. Existing customers can view estimated costs by logging-in to AWS, visiting the [AMI product page](https://aws.amazon.com/marketplace/pp/B00NQAYLWO) and clicking the "Continue" button.
+
+If a default VPC has not been set on EC2, it will be necessary to change this value to an EC2-Classic compatible instance type, such as m3.medium. All new AWS accounts have a default VPC created automatically. Please note that bumping the instance size up will incur higher charges. Differences can be compared on the product page above.
+
 To run an instance of the connector on EC2:
 
 - Ensure [Packer](https://www.packer.io/docs/installation.html) is installed.
@@ -24,7 +30,7 @@ To run an instance of the connector on EC2:
 - `cd packer`
 - `vi ami.json`
 - Edit the `region` JSON value to reflect your EC2 region of choice. The default is us-east-1.
-- `instance_type` is defaulted to t2.micro. If a default VPC has not been set on EC2, it will be necessary to change this value to an EC2-Classic compatible instance type, such as m3.medium. All new AWS accounts have a default VPC created automatically.
+- Edit the `instance_type` JSON value, if the default t2.micro is unsuitable.
 - `./build.sh [AWS_ACCESS_KEY] [AWS_SECRET_KEY]`
 - Once the Packer build has finished log on to your AWS dashboard, select the EC2 service and then click `AMIs`.
 - Launch an instance of the built AMI using the standard EC2 mechanism. Read [our wiki article](https://github.com/datasift/datasift-connector/wiki/Can-I-deploy-the-DataSift-Connector-to-an-existing-EC2-instance%3F) for information about why we recommend launching a new EC2 instance, rather than using an existing one.
