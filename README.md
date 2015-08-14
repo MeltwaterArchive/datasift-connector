@@ -293,7 +293,7 @@ Logs may be tailed directly via Supervisor: `sudo supervisorctl tail -f datasift
 
 - Deploying the Connector AMI to EC2 on top of a Debian based OS will likely cause issues with multiple components within the Connector instance. As noted in 'Quick Start - Deployment to EC2', the Connector has been developed and tested wtihin a pre-built CentOS 6.5 environment, and we strongly advise that packer be run using the included packer/build.sh script.
 
-### Packer Builds & Vagrant Provisioning
+### Packer Builds and Vagrant Provisioning
 
 It may be that whilst executing Packer or provisioning a local VM with Vagrant, errors will be encountered. Project maintainers will refrain from merging any unstable Chef changes into master for releases, so errors will usually be caused by a localised issue.
 
