@@ -23,6 +23,8 @@ The CentOS 6 source AMI used by the connector is a free product. Instance type w
 
 If a default VPC has not been set on EC2, it will be necessary to change this value to an EC2-Classic compatible instance type, such as m3.medium. All new AWS accounts have a default VPC created automatically. Please note that bumping the instance size up will incur higher charges. Differences can be compared on the product page above.
 
+### Deployment
+
 To run an instance of the connector on EC2:
 
 - Ensure [Packer](https://www.packer.io/docs/installation.html) is installed.
