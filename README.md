@@ -20,7 +20,11 @@ Please note that the connector has been developed and tested within CentOS 6.5. 
 To run an instance of the connector on EC2:
 
 - Ensure [Packer](https://www.packer.io/docs/installation.html) is installed.
+- Ensure [Chef DK](#chef) has been installed.
 - `cd packer`
+- `vi ami.json`
+- Edit the `region` JSON value to reflect your EC2 region of choice. The default is us-east-1.
+- `instance_type` is defaulted to t2.micro. If a default VPC has not been set on EC2, it will be necessary to change this value to an EC2-Classic compatible instance type, such as m3.medium. All new AWS accounts have a default VPC created automatically.
 - `./build.sh [AWS_ACCESS_KEY] [AWS_SECRET_KEY]`
 - Once the Packer build has finished log on to your AWS dashboard, select the EC2 service and then click `AMIs`.
 - Launch an instance of the built AMI using the standard EC2 mechanism. Read [our wiki article](https://github.com/datasift/datasift-connector/wiki/Can-I-deploy-the-DataSift-Connector-to-an-existing-EC2-instance%3F) for information about why we recommend launching a new EC2 instance, rather than using an existing one.
