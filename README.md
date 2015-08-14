@@ -6,7 +6,7 @@ The DataSift Connector is a set of components that enable you to retrieve data f
 
 ## Before You Start
 
-To deploy the connector or to work with it locally, you'll first need to clone the repo:
+To deploy the Connector or to work with it locally, you'll first need to clone the repo:
 
 - `git clone https://github.com/datasift/datasift-connector.git`
 - `cd datasift-connector`
@@ -15,17 +15,17 @@ To deploy the connector or to work with it locally, you'll first need to clone t
 
 ## Quick Start - Deployment to EC2
 
-Please note that the connector has been developed and tested within CentOS 6.5. The source AMI in use by our ami.json packer configuration is [ami-c2a818aa](https://aws.amazon.com/marketplace/pp/B00NQAYLWO/ref=rev_all_product_title). The connector is not guaranteed to operate correctly when deployed using alternative source images.
+Please note that the Connector has been developed and tested within CentOS 6.5. The source AMI in use by our ami.json packer configuration is [ami-c2a818aa](https://aws.amazon.com/marketplace/pp/B00NQAYLWO/ref=rev_all_product_title). The Connector is not guaranteed to operate correctly when deployed using alternative source images.
 
 ### Pricing
 
-The CentOS 6 source AMI used by the connector is a free product. Instance type when deployed with Packer is defaulted to t2.micro. This is a "Free Tier Eligible" instance type, and will reduce costs significantly when used within the first 12 months with a new AWS account. Existing customers can view estimated costs by logging-in to AWS, visiting the [AMI product page](https://aws.amazon.com/marketplace/pp/B00NQAYLWO) and clicking the "Continue" button.
+The CentOS 6 source AMI used by the Connector is a free product. Instance type when deployed with Packer is defaulted to t2.micro. This is a "Free Tier Eligible" instance type, and will reduce costs significantly when used within the first 12 months with a new AWS account. Existing customers can view estimated costs by logging-in to AWS, visiting the [AMI product page](https://aws.amazon.com/marketplace/pp/B00NQAYLWO) and clicking the "Continue" button.
 
 If a default VPC has not been set on EC2, it will be necessary to change this value to an EC2-Classic compatible instance type, such as m3.medium. All new AWS accounts have a default VPC created automatically. Please note that bumping the instance size up will incur higher charges. Differences can be compared on the product page above.
 
 ### Deployment
 
-To run an instance of the connector on EC2:
+To run an instance of the Connector on EC2:
 
 - Ensure [Packer](https://www.packer.io/docs/installation.html) is installed.
 - Ensure [Chef DK](#chef) has been installed.
@@ -52,7 +52,7 @@ You will now be ingesting your Gnip data into DataSift.
 
 ## Quick Start - Local Development
 
-To run a local instance of the connector do the following:
+To run a local instance of the Connector do the following:
 
 - Ensure [Vagrant](#vagrant) and relevant plug-ins are installed.
 - Ensure a stable version of [VirtualBox](https://www.virtualbox.org) is installed.
@@ -80,7 +80,7 @@ You will now be ingesting your Gnip data into DataSift.
 
 ## Installation
 
-We recommend that you deploy the connector using our [Packer configuration](https://github.com/datasift/datasift-connector/tree/master/packer). We supply configuration examples for building an EC2 AMI and also a Docker image. For local testing you can use Vagrant to create a local virtual machine. The Vagrantfile we supply will create a VirtualBox image, but this is easily modified for other targets.
+We recommend that you deploy the Connector using our [Packer configuration](https://github.com/datasift/datasift-connector/tree/master/packer). We supply configuration examples for building an EC2 AMI and also a Docker image. For local testing you can use Vagrant to create a local virtual machine. The Vagrantfile we supply will create a VirtualBox image, but this is easily modified for other targets.
 
 ### Chef
 
@@ -97,7 +97,7 @@ To get started run `vagrant up` from the root directory. If chef fails the first
 
 ## Connector Design
 
-To give some context, the first diagram below shows where this connector fits into the DataSift Data Ingestion API. The second diagram shows the design of this connector.
+To give some context, the first diagram below shows where this Connector fits into the DataSift Data Ingestion API. The second diagram shows the design of this Connector.
 
 ### Data Ingestion API
 
@@ -109,7 +109,7 @@ To give some context, the first diagram below shows where this connector fits in
 
 ### Data Flow
 
-The connector contains three main parts: a reader, a buffer, and a writer:
+The Connector contains three main parts: a reader, a buffer, and a writer:
 
 * The Gnip Reader or Twitter API Reader will connect to the Gnip/Twitter streaming API and pass the data received in to the buffer.
 * The buffer is there to prevent data loss should there be an issue with the connection to the DataSift Data Ingestion API. One item in the queue is expected to be a single piece of data, i.e. a tweet, retweet, delete, etc.
@@ -117,7 +117,7 @@ The connector contains three main parts: a reader, a buffer, and a writer:
 
 ### Metrics
 
-All components log metrics to statsd so you can easily integrate it into your monitoring infrastructure. We also provide a default Grafana dashboard for monitoring the connector which can be found at `http://[connector-machine]:3000`, or `http://localhost:3000` if using the provided Vagrant file. The default login for Grafana is set to admin / admin.
+All components log metrics to statsd so you can easily integrate it into your monitoring infrastructure. We also provide a default Grafana dashboard for monitoring the Connector which can be found at `http://[connector-machine]:3000`, or `http://localhost:3000` if using the provided Vagrant file. The default login for Grafana is set to admin / admin.
 
 ### Historics
 
@@ -290,7 +290,7 @@ Logs may be tailed directly via Supervisor: `sudo supervisorctl tail -f datasift
 
 #### EC2
 
-- Deploying the connector AMI to EC2 on top of a Debian based OS will likely cause issues with multiple components within the connector instance. As noted in 'Quick Start - Deployment to EC2', the connector has been developed and tested wtihin a pre-built CentOS 6.5 environment, and we strongly advise that packer be run using the included packer/build.sh script.
+- Deploying the Connector AMI to EC2 on top of a Debian based OS will likely cause issues with multiple components within the Connector instance. As noted in 'Quick Start - Deployment to EC2', the Connector has been developed and tested wtihin a pre-built CentOS 6.5 environment, and we strongly advise that packer be run using the included packer/build.sh script.
 
 ### Packer Builds & Vagrant Provisioning
 
