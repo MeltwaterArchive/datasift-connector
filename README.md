@@ -34,6 +34,7 @@ To run an instance of the Connector on EC2:
 - Edit the `region` JSON value to reflect your EC2 region of choice. The default is us-east-1.
 - Edit the `instance_type` JSON value, if the default t2.micro is unsuitable.
 - `./build.sh [AWS_ACCESS_KEY] [AWS_SECRET_KEY]`
+- During deployment, a license agreement may be presented. Accepting this is required for use of the source AMI.
 - Once the Packer build has finished log on to your AWS dashboard, select the EC2 service and then click `AMIs`.
 - Launch an instance of the built AMI using the standard EC2 mechanism. Read [our wiki article](https://github.com/datasift/datasift-connector/wiki/Can-I-deploy-the-DataSift-Connector-to-an-existing-EC2-instance%3F) for information about why we recommend launching a new EC2 instance, rather than using an existing one.
 
