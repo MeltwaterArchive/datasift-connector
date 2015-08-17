@@ -163,7 +163,7 @@ describe 'historics-reader::default' do
 
   describe file('/etc/datasift/historics-reader/reader.json') do
     it { should be_owned_by 'historicsreader' }
-    its(:md5sum) { should eq 'b4d65791d2db8ee48a05b41b9260942e' }
+    its(:md5sum) { should eq 'cee5e0e34249e0ee617daf3b734fc4b1' }
   end
 
 end
