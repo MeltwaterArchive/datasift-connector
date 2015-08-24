@@ -153,7 +153,7 @@ var server = http.createServer(function (req, res) {
 		handleResultFileRequest(req, res)
 	} else if (req.url.indexOf('/suspectMinutes.json') > -1) {
 		handleSuspectMinuteRequest(req, res)
-	} else if (req.url.indexOf('/streams/track/') > -1) {
+	} else if (req.url.indexOf('/streams/') > -1) {
 		handleStreamingConnection(req, res)
 	} else {
 		res.writeHead(404, {'Content-Type': 'text/plain'})
