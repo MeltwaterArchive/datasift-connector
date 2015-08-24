@@ -312,7 +312,7 @@ public class SimpleConsumerManager implements ConsumerManager {
         } else {
             HashMap<TopicAndPartition, OffsetAndMetadata> map = new HashMap<>();
             map.put(
-                    new TopicAndPartition(config.kafka.topic, 0),
+                    new TopicAndPartition(topic, 0),
                     new OffsetAndMetadata(lastReturnedOffset, "", -1L)
             );
             OffsetCommitRequest request = new OffsetCommitRequest(GROUP_ID, map, 0, clientName);
@@ -320,7 +320,7 @@ public class SimpleConsumerManager implements ConsumerManager {
             OffsetCommitResponse response = consumer.commitOffsets(request);
             if (response.hasError()) {
                 log.error("Error encountered whilst committing offset " + lastReturnedOffset + " for Kafka");
-                log.error("Commit error code: " + response.errorCode(new TopicAndPartition(config.kafka.topic, 0)));
+                log.error("Commit error code: " + response.errorCode(new TopicAndPartition(topic, 0)));
                 return false;
             } else {
                 log.debug("Consumer has committed offset " + lastReturnedOffset);
