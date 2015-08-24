@@ -192,7 +192,9 @@ public class SimpleConsumerManager implements ConsumerManager {
             // there are cached items from previous read to return
             ConsumerData item = dataItems.remove();
             lastReturnedOffset = item.getOffset();
-            log.debug("Consumer sending message onwards. Hash: " + item.hashCode());
+            log.debug("Consumer returning cached Kafka message. Offset: "
+                    + lastReturnedOffset
+                    + " Hash: " + item.hashCode());
             metrics.passedOnKafkaItem.mark();
             return item;
         }
@@ -262,12 +264,14 @@ public class SimpleConsumerManager implements ConsumerManager {
                 log.error("Found an old offset: " + currentOffset + " Expecting: " + readOffset);
                 continue;
             }
-            readOffset = messageAndOffset.nextOffset();
-            ByteBuffer payload = messageAndOffset.message().payload();
 
-            byte[] bytes = new byte[payload.limit()];
-            payload.get(bytes);
             try {
+                // read message bytes
+                ByteBuffer payload = messageAndOffset.message().payload();
+                byte[] bytes = new byte[payload.limit()];
+                payload.get(bytes);
+
+                // convert message
                 String data = new String(bytes, "UTF-8");
                 ConsumerData item = new ConsumerData(currentOffset, data);
                 log.debug("Adding new data item to consumer cache. Hash: " + item.hashCode());
@@ -323,6 +327,8 @@ public class SimpleConsumerManager implements ConsumerManager {
                 log.error("Commit error code: " + response.errorCode(new TopicAndPartition(topic, 0)));
                 return false;
             } else {
+                // update offset from which to read on next request
+                readOffset = lastReturnedOffset;
                 log.debug("Consumer has committed offset " + lastReturnedOffset);
                 return true;
             }
