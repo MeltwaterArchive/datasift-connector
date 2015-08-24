@@ -290,7 +290,7 @@ public class SimpleConsumerManager implements ConsumerManager {
             metrics.passedOnKafkaItem.mark();
             return item;
         } else {
-            log.debug("No messages found to read from Kafka broker " + leadBroker + " at offset " + );
+            log.debug("No messages found to read from Kafka broker " + leadBroker + " at offset " + readOffset);
             return null;
         }
     }
