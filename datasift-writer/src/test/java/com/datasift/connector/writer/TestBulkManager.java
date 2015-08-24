@@ -146,6 +146,38 @@ public class TestBulkManager {
     }
 
     @Test
+    public void send_should_wait_until_if_429() throws Exception {
+        Thread.sleep(1000); // Give WireMock time
+        stubFor(post(urlEqualTo("/SOURCEID"))
+                .willReturn(aResponse()
+                        .withStatus(429)
+                        .withHeader("Content-Type", "application/json")
+                        .withHeader("X-Ingestion-Data-RateLimit-Reset-Ttl", "1000")
+                        .withBody("{\"error\":\"This request's size exceeds the available data limit\"}")));
+
+        Logger log = mock(Logger.class);
+        Metrics metrics = new Metrics();
+        Backoff backoff = mock(Backoff.class);
+        SimpleConsumerManager consumer = mock(SimpleConsumerManager.class);
+
+        DataSiftConfig config = new DataSiftConfig();
+        config.baseURL = "http://localhost/";
+        config.sourceID = "SOURCEID";
+        config.port = 18089;
+        config.username = "USER";
+        config.apiKey = "APIKEY";
+
+        BulkManager bm = new BulkManager(config, consumer, backoff, metrics);
+        bm.setLogger(log);
+        bm.send(new BulkReadValues(0, "{}"));
+
+        verify(backoff).waitUntil(1000);
+        ArgumentCaptor<Date> arg = ArgumentCaptor.forClass(Date.class);
+        verify(log).info(eq("Rate limited, waiting until limits reset at {}"), arg.capture());
+        assertTrue(arg.getValue().getTime() > 1000);
+    }
+
+    @Test
     public void send_should_backoff_exponentially_if_status_code_400_plus() throws InterruptedException {
         Thread.sleep(1000); // Give WireMock time
         stubFor(post(urlEqualTo("/SOURCEID"))

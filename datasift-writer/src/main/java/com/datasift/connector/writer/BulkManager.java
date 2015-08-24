@@ -83,6 +83,12 @@ public class BulkManager implements Runnable {
     private CloseableHttpClient httpClient;
 
     /**
+     * Custom definition of HTTP status code for too many requests.
+     * https://tools.ietf.org/html/rfc6585#section-4
+     */
+    private static final int SC_TOO_MANY_REQUESTS = 429;
+
+    /**
      * Constructor.
      * @param config configuration for DataSift HTTP connection
      * @param simpleConsumerManager the simple consumer manager for Kafka
@@ -286,7 +292,7 @@ public class BulkManager implements Runnable {
                 backoff.reset();
                 log.trace("Data successfully sent to ingestion endpoint: {}", body);
                 log.debug("Data successfully sent to ingestion endpoint: hash {}", body.hashCode());
-              } else if (statusCode == HttpStatus.SC_REQUEST_TOO_LONG) {
+              } else if (statusCode == HttpStatus.SC_REQUEST_TOO_LONG || statusCode == SC_TOO_MANY_REQUESTS) {
                 long ttl = Long.parseLong(
                             response.getFirstHeader("X-Ingestion-Data-RateLimit-Reset-Ttl").getValue());
                 long ttlms = TimeUnit.SECONDS.toMillis(ttl);
