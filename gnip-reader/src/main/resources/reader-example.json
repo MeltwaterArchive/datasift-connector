@@ -1,7 +1,7 @@
 {
   "kafka": {
     "topic": "twitter",
-    "servers": "localhost:6667",
+    "servers": "localhost:9092",
     "retry-backoff": 1000,
     "reconnect-backoff": 1000
   },

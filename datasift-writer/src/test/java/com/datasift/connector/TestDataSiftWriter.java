@@ -47,7 +47,7 @@ public class TestDataSiftWriter {
         this.config.datasift.apiKey = "584b068700b0385493686a8d3f95696ac";
         this.config.datasift.sourceID = "a981db85e4bd452e80b4ccfc508e0c63";
         this.config.kafka = new KafkaConfig();
-        this.config.kafka.topic = "twitter-gnip";
+        this.config.kafka.topic = "twitter";
         this.config.metrics = new MetricsConfig();
         this.config.metrics.host = "G_HOST";
         this.config.metrics.port = 1111;
@@ -88,7 +88,7 @@ public class TestDataSiftWriter {
 
         verify(logger, never()).error(anyString());
         assertEquals("localhost:2181", config.zookeeper.socket);
-        assertEquals("twitter-gnip", config.kafka.topic);
+        assertEquals("twitter", config.kafka.topic);
         assertEquals("localhost", config.kafka.broker);
         assertEquals("https://in.datasift.com", config.datasift.baseURL);
         assertEquals((Integer)443, config.datasift.port);
@@ -115,7 +115,7 @@ public class TestDataSiftWriter {
 
         verify(logger, never()).error(anyString());
         assertEquals("localhost:2181", config.zookeeper.socket);
-        assertEquals("twitter-gnip", config.kafka.topic);
+        assertEquals("twitter", config.kafka.topic);
         assertEquals("localhost", config.kafka.broker);
         assertEquals("https://in.datasift.com", config.datasift.baseURL);
         assertEquals((Integer)443, config.datasift.port);
