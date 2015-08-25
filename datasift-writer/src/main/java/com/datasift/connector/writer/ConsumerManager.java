@@ -20,4 +20,12 @@ interface ConsumerManager {
      * @return boolean indicating whether the commit was successful
      */
     boolean commit();
+
+    /**
+     * Reset the read position back to the last commit. The next item read after a reset will
+     * return the message following the committed offset. Items read since the last commit will
+     * be returned again.
+     * @return boolean indicating whether reset was successful
+     */
+    boolean reset();
 }

@@ -204,6 +204,7 @@ public class TestBulkManager {
         bm.send(new BulkReadValues(0, "{}"));
 
         verify(backoff).exponentialBackoff();
+        verify(consumer).reset();
         verify(log).error("Error code returned from ingestion endpoint, status = {}", 503);
     }
 
@@ -225,6 +226,7 @@ public class TestBulkManager {
         bm.send(new BulkReadValues(0, "{}"));
 
         verify(backoff).linearBackoff();
+        when(consumer.reset()).thenReturn(true);
         verify(log).error(eq("Could not connect to ingestion endpoint"), any(Exception.class));
     }
 

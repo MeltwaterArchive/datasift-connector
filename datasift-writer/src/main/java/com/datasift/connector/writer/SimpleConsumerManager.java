@@ -336,6 +336,24 @@ public class SimpleConsumerManager implements ConsumerManager {
     }
 
     /**
+     * Reset the read position back to the last commit. The next item read after a reset will
+     * return the message following the committed offset. Items read since the last commit will
+     * be returned again.
+     */
+    @SuppressWarnings("checkstyle:designforextension")
+    public boolean reset() {
+        if (dataItems != null) {
+            dataItems.clear();
+
+            if (dataItems.isEmpty()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Gracefully shut down the consumer.
      */
     public final void shutdown() {
