@@ -68,6 +68,6 @@ remote_file \
   group node.kafka.group
   mode '644'
   action :create
-# Currently forego the event to avoid Kafka starting up in a zombie state
-#  notifies :restart, 'supervisor_service[kafka]', :delayed
+  # Currently forego the event to avoid Kafka starting up in a zombie state
+  # notifies :restart, 'supervisor_service[kafka]', :delayed
 end
