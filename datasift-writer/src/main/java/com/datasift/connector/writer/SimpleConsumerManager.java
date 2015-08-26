@@ -483,7 +483,15 @@ public class SimpleConsumerManager implements ConsumerManager {
             String retrievedMetadata = result.metadata();
             log.debug("Received offsets for topic " + topic + " & partition " + partition);
             log.debug("Offset: " + String.valueOf(retrievedOffset) + " Metadata: " + retrievedMetadata);
-            return retrievedOffset;
+
+            // if broker has returned -1 without error, we've yet to commit.
+            // start to read from 0
+            if (retrievedOffset == -1) {
+                log.info("No commits found against Kafka queue for topic " + topic + " & partition " + partition + ". Setting read offset to 0");
+                return 0;
+            } else {
+                return retrievedOffset;
+            }
         }
     }
 
