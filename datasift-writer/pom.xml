@@ -89,8 +89,8 @@
                     <group>Services/datasift-writer</group>
                     <!--copyright required to avoid error message "error: License field must be present in package: (main package)"-->
                     <copyright>DataSift - All rights reserved</copyright>
-                    <defaultGroupname>datasift_writer</defaultGroupname>
-                    <defaultUsername>datasift_writer</defaultUsername>
+                    <defaultGroupname>writer</defaultGroupname>
+                    <defaultUsername>writer</defaultUsername>
                     <mappings>
                         <mapping>
                             <filemode>755</filemode>
