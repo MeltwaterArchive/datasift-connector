@@ -27,6 +27,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -342,9 +343,9 @@ public class SimpleConsumerManager implements ConsumerManager {
             } else {
                 // update offset from which to read on next request
                 log.debug("Consumer commit: Updating initial offset from "
-                        + initialOffset + " to " + readOffset);
-                initialOffset = readOffset;
-                log.debug("Consumer has committed offset " + lastReturnedOffset);
+                        + initialOffset + " to " + lastReturnedOffset);
+                initialOffset = lastReturnedOffset;
+                log.debug("Consumer has committed offset " + lastReturnedOffset + " for topic " + topic);
                 return true;
             }
         }
@@ -460,6 +461,8 @@ public class SimpleConsumerManager implements ConsumerManager {
             return 0;
         }
         long[] offsets = response.offsets(topic, partition);
+        log.debug("Received offsets for topic " + topic + " & partition " + partition + " as:");
+        log.debug(Arrays.toString(offsets));
         return offsets[0];
     }
 
