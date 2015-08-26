@@ -1,6 +1,0 @@
-default['writer']['username'] = 'YOUR_DATASIFT_USERNAME'
-default['writer']['api_key'] = 'YOUR_DATASIFT_API_KEY'
-default['writer']['source_id'] = 'YOUR_DATASIFT_SOURCE_ID'
-default['writer']['url'] = 'https://in.datasift.com'
-default['writer']['local_dir'] = '/vagrant/'
-default['writer']['repo'] = 'datasift/datasift-connector'

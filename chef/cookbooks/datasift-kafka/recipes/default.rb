@@ -28,9 +28,6 @@ template ::File.join(node.kafka.config_dir, 'log4j.properties') do
   variables(
     config: node.kafka.log4j
   )
-  if restart_on_configuration_change?
-    notifies :create, 'ruby_block[coordinate-kafka-start]', :immediately
-  end
 end
 
 template ::File.join(node.kafka.config_dir, 'server.properties') do
@@ -42,23 +39,21 @@ template ::File.join(node.kafka.config_dir, 'server.properties') do
     node.kafka.broker.sort_by(&:first)
   end
   helpers(Kafka::Configuration)
-  if restart_on_configuration_change?
-    notifies :create, 'ruby_block[coordinate-kafka-start]', :immediately
-  end
-end
-
-ruby_block 'coordinate-kafka-start' do
-  block do
-    Chef::Log.debug 'Default recipe to coordinate Kafka start is used'
-  end
-  action :nothing
-  notifies :restart, 'supervisor_service[kafka]', :delayed
 end
 
 supervisor_service 'zookeeper' do
   user 'root'
   command "#{node.kafka.install_dir}/bin/zookeeper-server-start.sh "\
           '/opt/kafka/config/zookeeper.properties'
+end
+
+service 'kafka' do
+  action :disable, :stop
+end
+
+execute 'stop_initial_kafka' do
+  user 'root'
+  command 'pkill -f kafka.Kafka'
 end
 
 supervisor_service 'kafka' do

@@ -100,6 +100,11 @@ public class SimpleConsumerManager implements ConsumerManager {
     private long lastReturnedOffset;
 
     /**
+     * Offset from which to continue after a reset.
+     */
+    private long initialOffset;
+
+    /**
      * List containing brokers which replicate data.
      */
     private List<String> replicaBrokers = new ArrayList<String>();
@@ -281,6 +286,7 @@ public class SimpleConsumerManager implements ConsumerManager {
                 ConsumerData item = new ConsumerData(currentOffset, data);
                 log.debug("Adding new data item to consumer cache. Hash: " + item.hashCode());
                 dataItems.add(item);
+                readOffset = currentOffset;
                 metrics.readKafkaItem.mark();
             } catch (UnsupportedEncodingException e) {
                 log.error("Consumer error converting kafka item to String: " + e.getMessage());
@@ -334,6 +340,7 @@ public class SimpleConsumerManager implements ConsumerManager {
             } else {
                 // update offset from which to read on next request
                 readOffset = lastReturnedOffset;
+                initialOffset = readOffset;
                 log.debug("Consumer has committed offset " + lastReturnedOffset);
                 return true;
             }
@@ -352,6 +359,7 @@ public class SimpleConsumerManager implements ConsumerManager {
             dataItems.clear();
 
             if (dataItems.isEmpty()) {
+                readOffset = initialOffset;
                 return true;
             }
         }
@@ -406,6 +414,7 @@ public class SimpleConsumerManager implements ConsumerManager {
         log.info("Consumer is connecting to lead broker " + leadBroker + ":" + port + " under client id " + clientName);
         consumer = new SimpleConsumer(leadBroker, port, CONSUMER_TIMEOUT, CONSUMER_BUFFER_SIZE, clientName);
         readOffset = getLastOffset(consumer, topic, partition, kafka.api.OffsetRequest.EarliestTime(), clientName);
+        initialOffset = readOffset;
         log.info("Consumer is going to being reading from offset " + readOffset);
     }
 
