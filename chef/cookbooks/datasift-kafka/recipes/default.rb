@@ -75,5 +75,5 @@ execute 'stop_initial_kafka' do
   user 'root'
   command 'ps ax | grep -i \'kafka\.Kafka\' | grep java | grep -v grep |'\
     ' awk \'{print $1}\' | xargs kill -s SIGINT'
-  returns [0, 1]
+  returns [123, 0]
 end
