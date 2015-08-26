@@ -23,7 +23,7 @@ suites:
   - name: default
 
     run_list:
-      - recipe[java]
+      - recipe[java_se]
       - recipe[supervisor]
       - recipe[datasift-stats]
       - recipe[datasift-kafka]
