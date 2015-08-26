@@ -68,12 +68,6 @@ remote_file \
   group node.kafka.group
   mode '644'
   action :create
-  notifies :restart, 'supervisor_service[kafka]', :delayed
-end
-
-execute 'stop_initial_kafka' do
-  user 'root'
-  command 'ps ax | grep -i \'kafka\.Kafka\' | grep java | grep -v grep |'\
-    ' awk \'{print $1}\' | xargs kill -s SIGINT'
-  returns [123, 0]
+# Currently forego the event to avoid Kafka starting up in a zombie state
+#  notifies :restart, 'supervisor_service[kafka]', :delayed
 end
