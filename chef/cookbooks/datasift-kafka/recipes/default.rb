@@ -48,7 +48,8 @@ supervisor_service 'zookeeper' do
 end
 
 service 'kafka' do
-  action :disable, :stop
+  action :disable
+  action :stop
 end
 
 execute 'stop_initial_kafka' do
