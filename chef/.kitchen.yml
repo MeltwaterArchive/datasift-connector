@@ -41,7 +41,5 @@ suites:
           zookeeper_connection_timeout_ms: 15000
       packaging:
         ds_build_gocd: {enabled: true}
-      java:
-        jdk_version: 7
       influxdb:
         source: https://s3.amazonaws.com/influxdb/influxdb-0.8.8-1.x86_64.rpm
