@@ -1,0 +1,35 @@
+{
+  "name": "datasift-stats",
+  "description": "Installs/Configures datasift-stats",
+  "long_description": "Installs/Configures datasift-stats",
+  "maintainer": "The Authors",
+  "maintainer_email": "you@example.com",
+  "license": "all_rights",
+  "platforms": {
+  },
+  "dependencies": {
+    "supervisor": ">= 0.0.0",
+    "influxdb": ">= 0.0.0",
+    "git": ">= 0.0.0",
+    "nodejs": ">= 0.0.0"
+  },
+  "recommendations": {
+  },
+  "suggestions": {
+  },
+  "conflicting": {
+  },
+  "providing": {
+  },
+  "replacing": {
+  },
+  "attributes": {
+  },
+  "groupings": {
+  },
+  "recipes": {
+  },
+  "version": "0.1.0",
+  "source_url": "",
+  "issues_url": ""
+}

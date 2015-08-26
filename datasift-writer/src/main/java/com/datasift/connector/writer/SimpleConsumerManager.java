@@ -150,6 +150,11 @@ public class SimpleConsumerManager implements ConsumerManager {
     private static final int CONSUMER_TIMEOUT = 100000;
 
     /**
+     * Milliseconds to wait between attempts to connect to Zookeeper/Kafka
+     */
+    private static final long CONNECTION_SLEEP = 3000;
+
+    /**
      * Size of buffer, in bytes, used by consumer client.
      */
     private static final int CONSUMER_BUFFER_SIZE = 64 * 1024;
@@ -374,17 +379,25 @@ public class SimpleConsumerManager implements ConsumerManager {
      * Assigns initial read offset for consumer.
      */
     public final void run() {
-        connectZk();
+        //connectZk();
 
+        PartitionMetadata metadata = null;
+        boolean waitOnKafka = true;
         // find the meta data about the topic and partition we are interested in
-        PartitionMetadata metadata = findLeader(seedBrokers, port, topic, partition);
-        if (metadata == null) {
-            log.error("Kafka consumer can't find metadata for topic: " + topic + " & partition: " + partition);
-            return;
-        }
-        if (metadata.leader() == null) {
-            log.error("Kafka consumer can't find leader for topic: " + topic + " & partition: " + partition);
-            return;
+        while (waitOnKafka) {
+            metadata = findLeader(seedBrokers, port, topic, partition);
+            if (metadata == null) {
+                log.error("Kafka consumer can't find metadata for topic: " + topic + " & partition: " + partition);
+            } else if (metadata.leader() == null) {
+                log.error("Kafka consumer can't find leader for topic: " + topic + " & partition: " + partition);
+            } else {
+                waitOnKafka = false;
+            }
+            try {
+                Thread.sleep(CONNECTION_SLEEP);
+            } catch (InterruptedException ex) {
+
+            }
         }
         leadBroker = metadata.leader().host();
         clientName = "Client_" + topic + "_" + partition;

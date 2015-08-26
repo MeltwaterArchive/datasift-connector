@@ -1,0 +1,22 @@
+{
+  "database": {
+    "filepath": "/usr/lib/datasift/historics-api/db.sqlite"
+  },
+  "gnip": {
+    "base_url": "https://historical.gnip.com",
+    "port": 443,
+    "account_name": "YOUR_ACCOUNT_NAME"
+  },
+  "kafka": {
+    "topic": "twitter",
+    "servers": "localhost:6667",
+    "retry-backoff": 1000,
+    "reconnect-backoff": 1000
+  },
+  "metrics": {
+    "host": "localhost",
+    "port": 8125,
+    "prefix": "historics.reader",
+    "reporting-time": 1
+  }
+}

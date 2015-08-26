@@ -35,9 +35,6 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <requires>
-                        <require>java-1.7.0-openjdk</require>
-                    </requires>
                     <needarch>noarch</needarch>
                     <targetOS>linux</targetOS>
                     <group>Services/twitterapi-reader</group>

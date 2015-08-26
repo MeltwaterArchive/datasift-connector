@@ -1,0 +1,38 @@
+{
+  "name": "kafka",
+  "description": "Installs and configures a Kafka broker",
+  "long_description": "# kafka cookbook\n\n[![Build Status](https://travis-ci.org/mthssdrbrg/kafka-cookbook.svg?branch=master)](https://travis-ci.org/mthssdrbrg/kafka-cookbook)\n\nInstalls Kafka `v0.8.1.1`, and probably any newer versions.\n\nBased on the Kafka cookbook released by WebTrends (thanks!), but with a few\nnotable differences:\n\n* does not depend on runit cookbook.\n* does not depend on zookeeper cookbook, thus it will not search for nodes with\n  a specific role or such, that is left up to you to decide.\n* only tested on Vagrant boxes.\n* intended to be used by wrapper cookbooks.\n\n## Requirements\n\nThis cookbook does not depend on any specific cookbooks, but it requires that\njava is installed on the system, thus the `java` cookbook is recommended.\n\nRuby 1.9.3+ and Chef 11.6.0+.\n\n### Platform\n\n* Amazon Linux\n* CentOS 6.5 and 7\n* Debian 7.4\n* Fedora 20\n* Ubuntu 14.04\n\nMight work on other platforms / versions, but these are the ones that are\nincluded in `.kitchen.yml` and/or tested in the wild, so YMMV.\n\n## Attributes\n\nIn order to keep the README in some kind of manageable state (and thus in sync\nwith attributes), attributes are documented inline (in the `attribute` files\nthat is).\n\nAttributes concerning configuring of a Kafka broker are to be set under the\n`broker` namespace, and one can choose which ever syntax they prefer the most,\nthe following are all valid ways to define broker configuration:\n\n```ruby\nnode.default.kafka.broker[:log_dirs] = %w[/tmp/kafka-logs]\nnode.default.kafka.broker['log.dirs'] = %w[/tmp/kafka-logs]\nnode.default.kafka.broker.log.dirs = %w[/tmp/kafka-logs]\nnode.default[:kafka][:broker][:log][:dirs] = %w[/tmp/kafka-logs]\n```\n\nA warning regarding the \"dotted\" notation, it doesn't play very well when\nsetting attributes like `default.replication.factor` or\n`fetch.purgatory.purge.interval.requests` due to fairly obvious reasons\n(`default` and `fetch` are also methods).\n\nRefer to the official documentation for the version of Kafka that you're\ninstalling.\nDocumentation for the latest release can be found [over here](https://kafka.apache.org/documentation.html#brokerconfigs).\n\n## Recipes\n\nThis section describes the different recipes that are available.\n\n### default\n\nDownloads and installs Kafka from the official binary releases.\nDefaults to installing `v0.8.1.1` of Kafka.\n\n## Controlling restart of Kafka brokers in a cluster\n\nAny changes made to the broker configuration could result in a restart of the\nKafka broker, depending on configuration of this cookbook.\nIf Chef runs as a daemon on all of the nodes this could result in all of the Kafka\nbrokers being brought down at the same time, resulting in unavailability of\nservice.\n\nIf unavailability is an issue, this cookbook provides an option to implement custom\nlogic to control the restart of Kafka brokers so that not all of the brokers in\na cluster are stopped at the same time.\nFor example the custom logic can be something along the lines of acquiring a lock\nin ZooKeeper and when held the broker is allowed to restart.\nBe aware that a restart might take quite some time if you're using controlled\nshutdown and have a lot of partitions, and Chef usually have some timeout for\neach resource.\n\nBy default the resources in the [`_coordinate`](https://github.com/mthssdrbrg/kafka-cookbook/blob/master/recipes/_coordinate.rb)\nrecipe performs the start/restart of the `kafka` service.\nIf custom logic needs to be implemented, this recipe can be replaced with\nanother recipe, but don't forget to update the `kafka.start_coordination.recipe`\nattribute.\n\nThe only requrirement is that the new recipe has a `ruby_block` resource with\n`'coordinate-kafka-start'` as ID.\nThe following is a sample recipe that shows roughly what one can do with this\nfeature.\n\n```ruby\nruby_block 'coordinate-kafka-start' do\n  block do\n    Chef::Log.info 'Custom recipe to coordinate Kafka start/restart'\n  end\n  action :create\n  notifies :create, 'ruby_block[restart-coordination]', :delayed\nend\n\nruby_block 'restart-coordination' do\n  block do\n    Chef::Log.info 'Implement the process to coordinate the restart, like using ZK'\n  end\n  action :nothing\n  notifies :restart, 'service[kafka]', :delayed\n  notifies :create, 'ruby_block[restart-coordination-cleanup]', :delayed\nend\n\nservice 'kafka' do\n  provider kafka_init_opts[:provider]\n  supports start: true, stop: true, restart: true, status: true\n  action kafka_service_actions\nend\n\nruby_block 'restart-coordination-cleanup' do\n  block do\n    Chef::Log.info 'Implement any cleanup logic required after restart like releasing locks'\n  end\n  action :nothing\nend\n```\n\nPlease refer to [issue #58](https://github.com/mthssdrbrg/kafka-cookbook/issues/58) for background of this feature.\n\n## Copyright\n\nCopyright :: 2013-2015 Mathias Söderberg and contributors\n\nLicensed under the Apache License, Version 2.0 (the \"License\");\nyou may not use this file except in compliance with the License.\nYou may obtain a copy of the License at\n\n    http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable law or agreed to in writing, software\ndistributed under the License is distributed on an \"AS IS\" BASIS,\nWITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\nSee the License for the specific language governing permissions and\nlimitations under the License.\n\n## Contributing\n\n1. Fork the repository on Github\n2. Create a named feature branch (like `add-component-x`)\n3. Write your change\n4. Check that your change works, for example with Vagrant\n5. Submit a Pull Request using Github\n",
+  "maintainer": "Mathias Söderberg",
+  "maintainer_email": "mths@sdrbrg.se",
+  "license": "Apache 2.0",
+  "platforms": {
+    "centos": ">= 0.0.0",
+    "fedora": ">= 0.0.0",
+    "amazon": ">= 0.0.0",
+    "debian": ">= 0.0.0",
+    "ubuntu": ">= 0.0.0"
+  },
+  "dependencies": {
+  },
+  "recommendations": {
+  },
+  "suggestions": {
+    "java": "~> 1.22"
+  },
+  "conflicting": {
+  },
+  "providing": {
+  },
+  "replacing": {
+  },
+  "attributes": {
+  },
+  "groupings": {
+  },
+  "recipes": {
+    "kafka::default": "Downloads, compiles and installs Kafka from binary releases"
+  },
+  "version": "0.7.1",
+  "source_url": "",
+  "issues_url": ""
+}
