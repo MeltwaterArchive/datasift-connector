@@ -221,7 +221,7 @@ public class SimpleConsumerManager implements ConsumerManager {
                     .clientId(clientName)
                     .addFetch(topic, partition, readOffset, BYTES_TO_READ)
                     .build();
-            log.trace("Reading " + BYTES_TO_READ
+            log.debug("Reading " + BYTES_TO_READ
                     + " from Kafka broker " + leadBroker + ":" + port
                     + " with offset " + readOffset);
             fetchResponse = consumer.fetch(req);
@@ -286,7 +286,9 @@ public class SimpleConsumerManager implements ConsumerManager {
                 ConsumerData item = new ConsumerData(currentOffset, data);
                 log.debug("Adding new data item to consumer cache. Hash: " + item.hashCode());
                 dataItems.add(item);
-                readOffset = currentOffset;
+                long nextOffset = messageAndOffset.nextOffset();
+                log.debug("Updating next read offset from " + readOffset + " to " + nextOffset);
+                readOffset = nextOffset;
                 metrics.readKafkaItem.mark();
             } catch (UnsupportedEncodingException e) {
                 log.error("Consumer error converting kafka item to String: " + e.getMessage());
@@ -339,7 +341,8 @@ public class SimpleConsumerManager implements ConsumerManager {
                 return false;
             } else {
                 // update offset from which to read on next request
-                readOffset = lastReturnedOffset;
+                log.debug("Consumer commit: Updating initial offset from "
+                        + initialOffset + " to " + readOffset);
                 initialOffset = readOffset;
                 log.debug("Consumer has committed offset " + lastReturnedOffset);
                 return true;
@@ -359,6 +362,7 @@ public class SimpleConsumerManager implements ConsumerManager {
             dataItems.clear();
 
             if (dataItems.isEmpty()) {
+                log.debug("Consumer reset: Reverting next read offset from " + readOffset + " to " + initialOffset);
                 readOffset = initialOffset;
                 return true;
             }

@@ -52,12 +52,6 @@ service 'kafka' do
   action :stop
 end
 
-execute 'stop_initial_kafka' do
-  user 'root'
-  command 'pkill -f kafka.Kafka'
-  returns [1, 2]
-end
-
 supervisor_service 'kafka' do
   user 'kafka'
   command "/bin/bash -c '"\
@@ -75,4 +69,11 @@ remote_file \
   mode '644'
   action :create
   notifies :restart, 'supervisor_service[kafka]', :delayed
+end
+
+execute 'stop_initial_kafka' do
+  user 'root'
+  command 'ps ax | grep -i \'kafka\.Kafka\' | grep java | grep -v grep |'\
+    ' awk \'{print $1}\' | xargs kill -SIGINT'
+  returns [0, 1]
 end
