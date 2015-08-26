@@ -407,6 +407,7 @@ public class SimpleConsumerManager implements ConsumerManager {
                 waitOnKafka = false;
             }
             try {
+                log.info("Waiting on Kafka broker connection...");
                 Thread.sleep(CONNECTION_SLEEP);
             } catch (InterruptedException ex) {
 
