@@ -33,7 +33,7 @@
       "destination": "/tmp/historics-reader-latest.noarch.rpm"
     },{
       "type": "file",
-      "source": "{{pwd}}/twitter-reader-latest.noarch.rpm",
+      "source": "{{pwd}}/twitterapi-reader-latest.noarch.rpm",
       "destination": "/tmp/twitterapi-reader-latest.noarch.rpm"
     },{
       "type": "file",
