@@ -150,7 +150,7 @@ public class SimpleConsumerManager implements ConsumerManager {
     private static final int CONSUMER_TIMEOUT = 100000;
 
     /**
-     * Milliseconds to wait between attempts to connect to Zookeeper/Kafka
+     * Milliseconds to wait between attempts to connect to Zookeeper/Kafka.
      */
     private static final long CONNECTION_SLEEP = 3000;
 
@@ -377,12 +377,13 @@ public class SimpleConsumerManager implements ConsumerManager {
      * Gathers leader & partition information for topic.
      * Sets up client ID.
      * Assigns initial read offset for consumer.
+     * @param waitForConnection dictates whether execution waits for valid Kafka connection to proceed
      */
-    public final void run() {
+    public final void run(final boolean waitForConnection) {
         //connectZk();
 
         PartitionMetadata metadata = null;
-        boolean waitOnKafka = true;
+        boolean waitOnKafka = waitForConnection;
         // find the meta data about the topic and partition we are interested in
         while (waitOnKafka) {
             metadata = findLeader(seedBrokers, port, topic, partition);

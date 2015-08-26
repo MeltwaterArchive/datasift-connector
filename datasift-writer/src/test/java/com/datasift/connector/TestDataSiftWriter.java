@@ -59,6 +59,7 @@ public class TestDataSiftWriter {
     public void run_should_log_and_exit_if_arguments_empty() {
         reset(this.logger);
         DataSiftWriter dw = mock(DataSiftWriter.class);
+        dw.waitOnKafka = false;
         dw.setLogger(this.logger);
         String[] args = {};
         dw.run(args);
@@ -70,6 +71,7 @@ public class TestDataSiftWriter {
     public void run_should_log_and_exit_if_cannot_parse_config_file() {
         reset(this.logger);
         DataSiftWriter dw = mock(DataSiftWriter.class);
+        dw.waitOnKafka = false;
         dw.setLogger(this.logger);
         String[] args = {"FILE"};
         dw.run(args);
@@ -79,6 +81,7 @@ public class TestDataSiftWriter {
 
     @Test public void parsing_valid_config_returns_valid_object() {
         DataSiftWriter dw = mock(DataSiftWriter.class);
+        dw.waitOnKafka = false;
         when(dw.parseConfigFile(anyString())).thenCallRealMethod();
 
         Logger logger = mock(Logger.class);
@@ -106,6 +109,7 @@ public class TestDataSiftWriter {
 
     @Test public void parsing_example_config_returns_valid_object() {
         DataSiftWriter dw = mock(DataSiftWriter.class);
+        dw.waitOnKafka = false;
         when(dw.parseConfigFile(anyString())).thenCallRealMethod();
 
         Logger logger = mock(Logger.class);
@@ -133,6 +137,7 @@ public class TestDataSiftWriter {
 
     @Test public void parsing_invalid_json_returns_error() {
         DataSiftWriter dw = mock(DataSiftWriter.class);
+        dw.waitOnKafka = false;
         when(dw.parseConfigFile(anyString())).thenCallRealMethod();
 
         Logger logger = mock(Logger.class);
@@ -145,6 +150,7 @@ public class TestDataSiftWriter {
 
     @Test public void parsing_config_with_missing_item_returns_error() {
         DataSiftWriter dw = mock(DataSiftWriter.class);
+        dw.waitOnKafka = false;
         when(dw.parseConfigFile(anyString())).thenCallRealMethod();
 
         Logger logger = mock(Logger.class);
@@ -165,6 +171,7 @@ public class TestDataSiftWriter {
 
     @Test public void parsing_missing_config_file_returns_error() {
         DataSiftWriter dw = mock(DataSiftWriter.class);
+        dw.waitOnKafka = false;
         when(dw.parseConfigFile(anyString())).thenCallRealMethod();
 
         Logger logger = mock(Logger.class);
@@ -178,6 +185,7 @@ public class TestDataSiftWriter {
     @SuppressWarnings("unchecked")
     @Test public void run_should_create_and_start_metrics_reporter() {
         DataSiftWriter dw = mock(DataSiftWriter.class);
+        dw.waitOnKafka = false;
         when(dw.parseConfigFile(anyString())).thenReturn(this.config);
         dw.numConsumers = 1;
 
@@ -195,6 +203,7 @@ public class TestDataSiftWriter {
     @SuppressWarnings("unchecked")
     @Test public void run_should_mark_process_metric() {
         DataSiftWriter dw = mock(DataSiftWriter.class);
+        dw.waitOnKafka = false;
         when(dw.parseConfigFile(anyString())).thenReturn(this.config);
         dw.numConsumers = 1;
         Logger logger = mock(Logger.class);
@@ -217,16 +226,19 @@ public class TestDataSiftWriter {
 
     @Test public void should_set_should_read_default_to_true() {
         DataSiftWriter dsw = new DataSiftWriter();
+        dsw.waitOnKafka = false;
         assertTrue(dsw.shouldRead());
     }
 
     @Test public void should_set_should_process_default_to_true() {
         DataSiftWriter dsw = new DataSiftWriter();
+        dsw.waitOnKafka = false;
         assertTrue(dsw.shouldProcess());
     }
 
     @Test public void should_add_shutdown_hook() {
         DataSiftWriter dsw = new DataSiftWriter();
+        dsw.waitOnKafka = false;
         DataSiftWriter dswS = spy(dsw);
         dswS.addShutdownHook(1);
 
@@ -235,6 +247,7 @@ public class TestDataSiftWriter {
 
     @Test public void should_log_status() {
         DataSiftWriter dsw = new DataSiftWriter();
+        dsw.waitOnKafka = false;
         Logger log = mock(Logger.class);
         dsw.setLogger(log);
         dsw.logStatistics();
@@ -243,6 +256,7 @@ public class TestDataSiftWriter {
 
     @Test public void should_submit_bulk_manager_to_executor() {
         DataSiftWriter dsw = mock(DataSiftWriter.class);
+        dsw.waitOnKafka = false;
         doCallRealMethod().when(dsw).setupBulk(any(Config.class), any(SimpleConsumerManager.class), any(Metrics.class), any(Logger.class));
         ExecutorService executor = mock(ExecutorService.class);
         SimpleConsumerManager consumer = mock(SimpleConsumerManager.class);

@@ -51,6 +51,13 @@ public class DataSiftWriter {
     private boolean processRead = true;
 
     /**
+     * Whether service should wait on Kafka connection to continue execution.
+     */
+    @VisibleForTesting
+    @SuppressWarnings("checkstyle:designforextension")
+    protected boolean waitOnKafka = true;
+
+    /**
      * DataSift bulk manager.
      */
     @VisibleForTesting
@@ -193,7 +200,7 @@ public class DataSiftWriter {
     private void setupConsumer() {
         consumerManager = new SimpleConsumerManager(config, metrics);
         try {
-            consumerManager.run();
+            consumerManager.run(waitOnKafka);
         } catch (Exception e) {
             log.error("Error during start-up of Kafka consumer manager. Details: " + e.getMessage());
             e.printStackTrace();
