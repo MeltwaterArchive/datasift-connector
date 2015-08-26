@@ -55,6 +55,7 @@ end
 execute 'stop_initial_kafka' do
   user 'root'
   command 'pkill -f kafka.Kafka'
+  returns [1, 2]
 end
 
 supervisor_service 'kafka' do
