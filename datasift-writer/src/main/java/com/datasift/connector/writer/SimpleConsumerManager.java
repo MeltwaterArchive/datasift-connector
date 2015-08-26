@@ -4,15 +4,16 @@ import com.datasift.connector.writer.config.Config;
 import com.datasift.connector.writer.config.ZookeeperConfig;
 import kafka.api.FetchRequest;
 import kafka.api.FetchRequestBuilder;
-import kafka.api.PartitionOffsetRequestInfo;
 import kafka.common.ErrorMapping;
 import kafka.common.OffsetAndMetadata;
+import kafka.common.OffsetMetadataAndError;
 import kafka.common.TopicAndPartition;
 
 import kafka.javaapi.FetchResponse;
 import kafka.javaapi.OffsetCommitRequest;
 import kafka.javaapi.OffsetCommitResponse;
-import kafka.javaapi.OffsetResponse;
+import kafka.javaapi.OffsetFetchRequest;
+import kafka.javaapi.OffsetFetchResponse;
 import kafka.javaapi.PartitionMetadata;
 import kafka.javaapi.TopicMetadata;
 import kafka.javaapi.TopicMetadataRequest;
@@ -27,11 +28,9 @@ import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
 
 /**
@@ -104,6 +103,11 @@ public class SimpleConsumerManager implements ConsumerManager {
      * Offset from which to continue after a reset.
      */
     private long initialOffset;
+
+    /**
+     * Incrementing ID for offset fetching.
+     */
+    private static final int CORRELATION_ID = 1;
 
     /**
      * List containing brokers which replicate data.
@@ -239,7 +243,7 @@ public class SimpleConsumerManager implements ConsumerManager {
                 if (code == ErrorMapping.OffsetOutOfRangeCode()) {
                     // We asked for an invalid offset. For simple case ask for the last element to reset
                     readOffset = getLastOffset(
-                            consumer, topic, partition, kafka.api.OffsetRequest.LatestTime(), clientName
+                            consumer, topic, partition, clientName
                     );
                     log.error("Consumer requested an invalid offset. Resetting to " + readOffset);
                     continue;
@@ -419,7 +423,7 @@ public class SimpleConsumerManager implements ConsumerManager {
 
         log.info("Consumer is connecting to lead broker " + leadBroker + ":" + port + " under client id " + clientName);
         consumer = new SimpleConsumer(leadBroker, port, CONSUMER_TIMEOUT, CONSUMER_BUFFER_SIZE, clientName);
-        readOffset = getLastOffset(consumer, topic, partition, kafka.api.OffsetRequest.EarliestTime(), clientName);
+        readOffset = getLastOffset(consumer, topic, partition, clientName);
         initialOffset = readOffset;
         log.info("Consumer is going to being reading from offset " + readOffset);
     }
@@ -443,27 +447,44 @@ public class SimpleConsumerManager implements ConsumerManager {
      * @param consumer consumer client to use for request
      * @param topic topic id for which to lookup offset
      * @param partition partition id for which to lookup offset
-     * @param whichTime OffsetRequest constant defining which offset is preferred
      * @param clientName client id to include in request
      * @return the offset returned from the lead broker
      */
-    private static long getLastOffset(final SimpleConsumer consumer, final String topic, final int partition,
-                                      final long whichTime, final String clientName) {
+    private static long getLastOffset(final SimpleConsumer consumer, final String topic,
+                                      final int partition, final String clientName) {
         TopicAndPartition topicAndPartition = new TopicAndPartition(topic, partition);
-        Map<TopicAndPartition, PartitionOffsetRequestInfo> requestInfo = new HashMap<>();
-        requestInfo.put(topicAndPartition, new PartitionOffsetRequestInfo(whichTime, 1));
-        kafka.javaapi.OffsetRequest request = new kafka.javaapi.OffsetRequest(
-                requestInfo, kafka.api.OffsetRequest.CurrentVersion(), clientName);
-        OffsetResponse response = consumer.getOffsetsBefore(request);
 
-        if (response.hasError()) {
-            log.error("Error fetching offset data from the Broker. Reason: " + response.errorCode(topic, partition));
-            return 0;
+        List<TopicAndPartition> partitions = new ArrayList<>();
+        partitions.add(topicAndPartition);
+        OffsetFetchRequest fetchRequest = new OffsetFetchRequest(
+                GROUP_ID,
+                partitions,
+                (short) 1,
+                CORRELATION_ID,
+                clientName);
+        OffsetFetchResponse response = consumer.fetchOffsets(fetchRequest);
+
+        if (response == null) {
+            log.error("Error fetching offset data from the Broker.");
+            return -1;
         }
-        long[] offsets = response.offsets(topic, partition);
-        log.debug("Received offsets for topic " + topic + " & partition " + partition + " as:");
-        log.debug(Arrays.toString(offsets));
-        return offsets[0];
+
+        OffsetMetadataAndError result = response.offsets().get(topicAndPartition);
+        short offsetFetchErrorCode = result.error();
+
+        if (offsetFetchErrorCode == ErrorMapping.NotCoordinatorForConsumerCode()) {
+            log.error("Error encountered whilst fetching Kafka offset: NotCoordinatorForConsumerCode");
+            return -1;
+        } else if (offsetFetchErrorCode == ErrorMapping.OffsetsLoadInProgressCode()) {
+            log.error("Error encountered whilst fetching Kafka offset: OffsetsLoadInProgressCode");
+            return -1;
+        } else {
+            long retrievedOffset = result.offset();
+            String retrievedMetadata = result.metadata();
+            log.debug("Received offsets for topic " + topic + " & partition " + partition);
+            log.debug("Offset: " + String.valueOf(retrievedOffset) + " Metadata: " + retrievedMetadata);
+            return retrievedOffset;
+        }
     }
 
     /**
