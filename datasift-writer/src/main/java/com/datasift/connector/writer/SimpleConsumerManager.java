@@ -392,7 +392,7 @@ public class SimpleConsumerManager implements ConsumerManager {
      * @param waitForConnection dictates whether execution waits for valid Kafka connection to proceed
      */
     public final void run(final boolean waitForConnection) {
-        //connectZk();
+        connectZk();
 
         PartitionMetadata metadata = null;
         boolean waitOnKafka = waitForConnection;
