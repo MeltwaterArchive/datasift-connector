@@ -19,9 +19,11 @@ Please note that the Connector has been developed and tested within CentOS 6.5. 
 
 ### Pricing
 
-The CentOS 6 source AMI used by the Connector is a free product. Instance type when deployed with Packer is defaulted to t2.micro. This is a "Free Tier Eligible" instance type, and will reduce costs significantly when used within the first 12 months with a new AWS account. Existing customers can view estimated costs by logging-in to AWS, visiting the [AMI product page](https://aws.amazon.com/marketplace/pp/B00NQAYLWO) and clicking the "Continue" button.
+The CentOS 6 source AMI used by the Connector is a free product. The EC2 instance type used by default to build the Connector AMI is t2.small, as a t2.micro type may encounter Chef memory limitations. This is NOT a "Free Tier Eligible" instance type, and will incur charges each time a Connector AMI is built. These charges should be minimal. Existing customers can view estimated costs for various tiers by logging-in to AWS, visiting the [AMI product page](https://aws.amazon.com/marketplace/pp/B00NQAYLWO) and clicking the "Continue" button.
 
 If a default VPC has not been set on EC2, it will be necessary to change this value to an EC2-Classic compatible instance type, such as m3.medium. All new AWS accounts have a default VPC created automatically. Please note that bumping the instance size up will incur higher charges. Differences can be compared on the product page above.
+
+Once the Connector AMI has been built using Packer, a lower tier instance can be used to run the Connector, as memory usage is lower during operation than during the provisioning process.
 
 ### Deployment
 
@@ -32,11 +34,11 @@ To run an instance of the Connector on EC2:
 - `cd packer`
 - `vi ami.json`
 - Edit the `region` JSON value to reflect your EC2 region of choice. The default is us-east-1.
-- Edit the `instance_type` JSON value, if the default t2.micro is unsuitable.
+- Edit the `instance_type` JSON value if needed, based on the advice above in the Pricing section.
 - `./build.sh [AWS_ACCESS_KEY] [AWS_SECRET_KEY]`
 - During deployment, a license agreement may be presented. Accepting this is required for use of the source AMI.
 - Once the Packer build has finished log on to your AWS dashboard, select the EC2 service and then click `AMIs`.
-- Launch an instance of the built AMI using the standard EC2 mechanism. Read [our wiki article](https://github.com/datasift/datasift-connector/wiki/Can-I-deploy-the-DataSift-Connector-to-an-existing-EC2-instance%3F) for information about why we recommend launching a new EC2 instance, rather than using an existing one.
+- Launch an instance of the built AMI using the standard EC2 mechanism, using your instance type of choice. Read [our wiki article](https://github.com/datasift/datasift-connector/wiki/Can-I-deploy-the-DataSift-Connector-to-an-existing-EC2-instance%3F) for information about why we recommend launching a new EC2 instance, rather than using an existing one.
 
 After launching an instance, you'll next need to configure it:
 
@@ -225,7 +227,7 @@ Example:
     "socket": "localhost:2181"
   },
   "kafka": {
-    "topic": "twitter-gnip",
+    "topic": "twitter",
     "broker": "localhost",
     "port": 9092
   },
@@ -291,11 +293,12 @@ Logs may be tailed directly via Supervisor: `sudo supervisorctl tail -f datasift
 
 #### EC2
 
-- Deploying the Connector AMI to EC2 on top of a Debian based OS will likely cause issues with multiple components within the Connector instance. As noted in 'Quick Start - Deployment to EC2', the Connector has been developed and tested wtihin a pre-built CentOS 6.5 environment, and we strongly advise that packer be run using the included packer/build.sh script.
+- Deploying the Connector AMI to EC2 on top of a Debian based OS will likely cause issues with multiple components within the Connector instance. As noted in 'Quick Start - Deployment to EC2', the Connector has been developed and tested within a pre-built CentOS 6.5 environment, and we strongly advise that packer be run using the included packer/build.sh script.
+- Memory allocation errors can occur during the Packer provisioning process. Please follow the advice in the [Pricing](#pricing) section and EC2 Quick Deployment steps regarding instance types, to ensure the AMI building instance and Connector instance are suitable.
 
 ### Packer Builds and Vagrant Provisioning
 
-It may be that whilst executing Packer or provisioning a local VM with Vagrant, errors will be encountered. Project maintainers will refrain from merging any unstable Chef changes into master for releases, so errors will usually be caused by a localised issue.
+It may be that whilst executing Packer or provisioning a local VM with Vagrant, errors will be encountered. Project maintainers will refrain from merging any unstable Chef changes into master for releases, so errors will usually be caused by a dependency or a localised issue.
 
 Network issues are a common cause. Errors pertaining to reset connections or domain name resolution indicate that:
   - VirtualBox bridged to the incorrect network adapter when executing `vagrant up`

@@ -503,8 +503,8 @@ public class TestHosebirdReader {
         assertEquals(10, config.hosebird.retries);
         assertEquals(10000, config.hosebird.bufferSize);
         assertEquals(500, config.hosebird.bufferTimeout);
-        assertEquals("twitter-gnip", config.kafka.topic);
-        assertEquals("localhost:9092", config.kafka.servers);
+        assertEquals("twitter", config.kafka.topic);
+        assertEquals("localhost:6667", config.kafka.servers);
         assertEquals(1001, config.kafka.retryBackoff);
         assertEquals(1002, config.kafka.reconnectBackoff);
     }

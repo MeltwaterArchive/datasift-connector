@@ -1,4 +1,8 @@
 
+yum_package 'fontconfig' do
+  action :install
+end
+
 remote_file "#{Chef::Config[:file_cache_path]}/grafana_latest.rpm" do
   source 'https://grafanarel.s3.amazonaws.com/builds/grafana-2.0.2-1.x86_64.rpm'
   action :create

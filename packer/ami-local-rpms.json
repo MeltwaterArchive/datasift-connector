@@ -10,7 +10,7 @@
       "secret_key": "{{user `aws_secret_key`}}",
       "region": "us-east-1",
       "source_ami": "ami-c2a818aa",
-      "instance_type": "t2.micro",
+      "instance_type": "t2.small",
       "ssh_username": "root",
       "ssh_pty": true,
       "ami_name": "datasift-connector {{timestamp}}"
@@ -33,7 +33,7 @@
       "destination": "/tmp/historics-reader-latest.noarch.rpm"
     },{
       "type": "file",
-      "source": "{{pwd}}/twitter-reader-latest.noarch.rpm",
+      "source": "{{pwd}}/twitterapi-reader-latest.noarch.rpm",
       "destination": "/tmp/twitterapi-reader-latest.noarch.rpm"
     },{
       "type": "file",
@@ -45,7 +45,7 @@
       "cookbook_paths": ["{{pwd}}/../chef/vendor/cookbooks"],
       "environments_path": "{{pwd}}/../chef/environments",
       "run_list": [
-        "recipe[java]",
+        "recipe[java_se]",
         "recipe[supervisor]",
         "recipe[datasift-stats]",
         "recipe[datasift-kafka]",

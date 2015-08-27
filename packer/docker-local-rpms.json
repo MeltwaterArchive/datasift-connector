@@ -42,7 +42,7 @@
       "cookbook_paths": ["{{pwd}}/../chef/vendor/cookbooks"],
       "environments_path": "{{pwd}}/../chef/environments",
       "run_list": [
-        "recipe[java]",
+        "recipe[java_se]",
         "recipe[supervisor]",
         "recipe[datasift-stats]",
         "recipe[datasift-kafka]",

@@ -293,6 +293,7 @@ public class BulkManager implements Runnable {
                 log.trace("Data successfully sent to ingestion endpoint: {}", body);
                 log.debug("Data successfully sent to ingestion endpoint: hash {}", body.hashCode());
               } else if (statusCode == HttpStatus.SC_REQUEST_TOO_LONG || statusCode == SC_TOO_MANY_REQUESTS) {
+                simpleConsumerManager.reset();
                 long ttl = Long.parseLong(
                             response.getFirstHeader("X-Ingestion-Data-RateLimit-Reset-Ttl").getValue());
                 long ttlms = TimeUnit.SECONDS.toMillis(ttl);
@@ -301,12 +302,14 @@ public class BulkManager implements Runnable {
                 metrics.sendRateLimit.mark();
                 backoff.waitUntil(ttl);
             } else if (statusCode >= HttpStatus.SC_BAD_REQUEST) {
+                simpleConsumerManager.reset();
                 EntityUtils.consume(response.getEntity());
                 log.error("Error code returned from ingestion endpoint, status = {}", statusCode);
                 metrics.sendError.mark();
                 backoff.exponentialBackoff();
             }
         } catch (URISyntaxException | IOException | RuntimeException e) {
+            simpleConsumerManager.reset();
             if (response != null) {
                 try {
                     EntityUtils.consume(response.getEntity());

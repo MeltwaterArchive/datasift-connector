@@ -14,8 +14,8 @@ public class TestKafkaConfig {
     @Test
     public void can_set_properties() {
         KafkaConfig kc = new KafkaConfig();
-        assertEquals("twitter-gnip", kc.topic);
-        assertEquals("localhost:9092", kc.servers);
+        assertEquals("twitter", kc.topic);
+        assertEquals("localhost:6667", kc.servers);
         assertEquals(1000, kc.retryBackoff);
         assertEquals(1000, kc.reconnectBackoff);
         kc.topic = "TOPIC";
