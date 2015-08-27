@@ -225,7 +225,7 @@ Example:
     "socket": "localhost:2181"
   },
   "kafka": {
-    "topic": "twitter-gnip",
+    "topic": "twitter",
     "broker": "localhost",
     "port": 9092
   },

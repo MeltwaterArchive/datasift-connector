@@ -24,7 +24,7 @@ public class KafkaConfig {
     @NotNull
     @Size(max = 255)
     @Pattern(regexp = "[a-zA-Z0-9\\\\._\\\\-]+")
-    public String topic = "twitter-gnip";
+    public String topic = "twitter";
 
     /**
      * The Kafka broker address.

@@ -5,25 +5,23 @@
       "log_dirs": [
         "/mnt"
       ],
+      "log_roll_hours": 1,
       "zookeeper_connect": [
         "localhost:2181"
       ],
       "zookeeper_connection_timeout_ms": 15000
     }
   },
-  "java": {
-    "jdk_version": 7
-  },
   "influxdb": {
     "source": "https://s3.amazonaws.com/influxdb/influxdb-0.8.8-1.x86_64.rpm"
   },
   "run_list": [
-    "recipe[java]",
+    "recipe[java_se]",
     "recipe[supervisor]",
     "recipe[datasift-stats]",
     "recipe[datasift-kafka]",
-    "recipe[datasift-writer]",
     "recipe[gnip-reader]",
+    "recipe[datasift-writer]",
     "recipe[twitterapi-reader]",
     "recipe[historics-api]",
     "recipe[historics-reader]",

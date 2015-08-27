@@ -13,7 +13,7 @@ public class TestKafkaConfig {
     @Test
     public void can_set_properties() {
         KafkaConfig kc = new KafkaConfig();
-        assertEquals("twitter-gnip", kc.topic);
+        assertEquals("twitter", kc.topic);
         assertEquals("localhost", kc.broker);
         kc.topic = "TOPIC";
         kc.broker = "SERVERS";

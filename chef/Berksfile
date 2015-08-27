@@ -1,6 +1,6 @@
 source 'https://supermarket.chef.io'
 
-cookbook 'java', '~> 1.31.0'
+cookbook 'java_se', '~> 8.60.2'
 cookbook 'datasift-stats', path: 'cookbooks/datasift-stats'
 cookbook 'datasift-kafka', path: 'cookbooks/datasift-kafka'
 cookbook 'datasift-writer', path: 'cookbooks/datasift-writer'

@@ -8,6 +8,9 @@
     },
     "writer": {
       "local_dir": "/tmp/"
+    },
+    "historics-reader": {
+      "local_dir": "/tmp/"
     }
   }
 }

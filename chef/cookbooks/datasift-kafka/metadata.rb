@@ -9,4 +9,4 @@ version          '0.1.0'
 
 depends 'kafka', '= 0.7.1'
 depends 'supervisor', '= 0.4.12'
-depends 'java', '~> 1.31.0'
+depends 'java_se', '~> 8.60.2'
