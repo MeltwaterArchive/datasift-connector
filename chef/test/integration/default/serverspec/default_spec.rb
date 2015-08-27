@@ -151,6 +151,32 @@ describe 'gnip-reader::default' do
 
 end
 
+describe 'twitterapi-reader::default' do
+
+  describe package('twitterapi-reader') do
+    it { should be_installed }
+  end
+
+  describe user('reader') do
+    it { should exist }
+  end
+
+  describe file('/etc/datasift/twitterapi-reader/reader.json') do
+    it { should be_owned_by 'reader' }
+    # TODO: find a way to check the md5sum after attribute injection
+  end
+
+  describe service('twitterapi-reader') do
+    it { should be_running.under('supervisor') }
+  end
+
+  describe command('yum info twitterapi-reader | '\
+                   "grep \"Repo        : installed\"") do
+    its(:exit_status) { should eq 0 }
+  end
+
+end
+
 describe 'historics-reader::default' do
 
   describe package('historics-reader') do
