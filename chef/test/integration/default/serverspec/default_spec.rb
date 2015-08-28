@@ -150,23 +150,23 @@ describe 'gnip-reader::default' do
   end
 
 end
-
-describe 'historics-reader::default' do
-
-  describe package('historics-reader') do
-    it { should be_installed }
-  end
-
-  describe user('historicsreader') do
-    it { should exist }
-  end
-
-  describe file('/etc/datasift/historics-reader/reader.json') do
-    it { should be_owned_by 'historicsreader' }
-    its(:md5sum) { should eq 'cee5e0e34249e0ee617daf3b734fc4b1' }
-  end
-
-end
+##
+#describe 'historics-reader::default' do
+#
+#  describe package('historics-reader') do
+#    it { should be_installed }
+#  end
+#
+#  describe user('historicsreader') do
+#    it { should exist }
+#  end
+#
+#  describe file('/etc/datasift/historics-reader/reader.json') do
+#    it { should be_owned_by 'historicsreader' }
+#    its(:md5sum) { should eq 'cee5e0e34249e0ee617daf3b734fc4b1' }
+#  end
+#
+#end
 
 describe 'historics-api::default' do
 
