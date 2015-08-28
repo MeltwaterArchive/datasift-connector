@@ -31,7 +31,7 @@ suites:
       - recipe[datasift-writer]
       - recipe[gnip-reader]
       - recipe[historics-api]
-      - recipe[historics-reader]
+      #- recipe[historics-reader]
     attributes:
       kafka:
         ulimit_file: 128000
