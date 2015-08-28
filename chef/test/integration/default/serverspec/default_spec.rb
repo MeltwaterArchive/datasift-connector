@@ -151,7 +151,7 @@ describe 'gnip-reader::default' do
 
 end
 ##
-#describe 'historics-reader::default' do
+# describe 'historics-reader::default' do
 #
 #  describe package('historics-reader') do
 #    it { should be_installed }
@@ -166,7 +166,7 @@ end
 #    its(:md5sum) { should eq 'cee5e0e34249e0ee617daf3b734fc4b1' }
 #  end
 #
-#end
+# end
 
 describe 'historics-api::default' do
 
