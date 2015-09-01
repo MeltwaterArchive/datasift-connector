@@ -32,7 +32,7 @@ suites:
       - recipe[gnip-reader]
       - recipe[twitterapi-reader]
       - recipe[historics-api]
-      - recipe[historics-reader]
+      #- recipe[historics-reader]
     attributes:
       kafka:
         ulimit_file: 128000

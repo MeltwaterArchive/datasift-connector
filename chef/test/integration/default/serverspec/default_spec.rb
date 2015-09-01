@@ -166,9 +166,7 @@ describe 'twitterapi-reader::default' do
     # TODO: find a way to check the md5sum after attribute injection
   end
 
-  describe service('twitterapi-reader') do
-    it { should be_running.under('supervisor') }
-  end
+  # This service is stopped by default. So no running test.
 
   describe command('yum info twitterapi-reader | '\
                    "grep \"Repo        : installed\"") do
@@ -177,6 +175,8 @@ describe 'twitterapi-reader::default' do
 
 end
 
+
+=begin
 describe 'historics-reader::default' do
 
   describe package('historics-reader') do
@@ -193,6 +193,8 @@ describe 'historics-reader::default' do
   end
 
 end
+=end
+
 
 describe 'historics-api::default' do
 
