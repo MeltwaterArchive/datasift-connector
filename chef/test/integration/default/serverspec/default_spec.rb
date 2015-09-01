@@ -150,23 +150,51 @@ describe 'gnip-reader::default' do
   end
 
 end
-##
-# describe 'historics-reader::default' do
-#
-#  describe package('historics-reader') do
-#    it { should be_installed }
-#  end
-#
-#  describe user('historicsreader') do
-#    it { should exist }
-#  end
-#
-#  describe file('/etc/datasift/historics-reader/reader.json') do
-#    it { should be_owned_by 'historicsreader' }
-#    its(:md5sum) { should eq 'cee5e0e34249e0ee617daf3b734fc4b1' }
-#  end
-#
-# end
+
+describe 'twitterapi-reader::default' do
+
+  describe package('twitterapi-reader') do
+    it { should be_installed }
+  end
+
+  describe user('reader') do
+    it { should exist }
+  end
+
+  describe file('/etc/datasift/twitterapi-reader/reader.json') do
+    it { should be_owned_by 'reader' }
+    # TODO: find a way to check the md5sum after attribute injection
+  end
+
+  # This service is stopped by default. So no running test.
+
+  describe command('yum info twitterapi-reader | '\
+                   "grep \"Repo        : installed\"") do
+    its(:exit_status) { should eq 0 }
+  end
+
+end
+
+
+=begin
+describe 'historics-reader::default' do
+
+  describe package('historics-reader') do
+    it { should be_installed }
+  end
+
+  describe user('historicsreader') do
+    it { should exist }
+  end
+
+  describe file('/etc/datasift/historics-reader/reader.json') do
+    it { should be_owned_by 'historicsreader' }
+    its(:md5sum) { should eq 'cee5e0e34249e0ee617daf3b734fc4b1' }
+  end
+
+end
+=end
+
 
 describe 'historics-api::default' do
 
