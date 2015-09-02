@@ -6,6 +6,7 @@ var fs = require('fs')
 	, data_filename = process.argv[3] || 'data/raw.json'
 	, min_delay_ms = process.argv[4] || 4
 	, max_delay_ms = process.argv[5] || 500
+	, verbose = process.argv[6] || false
 
 var data = fs.readFileSync(data_filename).toString().split("\n");
 
@@ -101,7 +102,9 @@ var sendNextLine = function(res, line_number) {
 		line_number = 0
 	}
 	res.write(data[line_number] + "\n")
-	console.log(data[line_number])
+	if (verbose) {
+		console.log(data[line_number])
+	}
 	setTimeout(function() {
 		sendNextLine(res, line_number + 1)
 	}, Math.floor(Math.random() * (max_delay_ms - min_delay_ms) + min_delay_ms))
