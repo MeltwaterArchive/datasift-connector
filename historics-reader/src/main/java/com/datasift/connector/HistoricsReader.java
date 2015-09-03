@@ -7,9 +7,18 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.apache.http.client.fluent.Request;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.http.HttpResponse;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import com.google.common.annotations.VisibleForTesting;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
@@ -36,8 +45,10 @@ import java.lang.management.ManagementFactory;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -63,6 +74,11 @@ public class HistoricsReader {
      *
      */
     private Connection dbConn = null;
+
+    /**
+     *
+     */
+    private CloseableHttpClient httpClient = null;
 
     /**
      *
@@ -114,6 +130,9 @@ public class HistoricsReader {
             return;
         }
 
+        // Prepare HTTP client
+        setupClient();
+
         // Client to send messages to the onward queue
         producer = getKafkaProducer(config.kafka);
 
@@ -133,6 +152,22 @@ public class HistoricsReader {
 
         log.info("No more delivered jobs could be locked for processing.");
         producer.close();
+
+        try {
+            httpClient.close();
+        } catch (IOException e) {
+
+        }
+    }
+
+    /**
+     * Initialises HTTP client to be used for all API calls.
+     */
+    private void setupClient() {
+        CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+        credentialsProvider.setCredentials(AuthScope.ANY,
+                new UsernamePasswordCredentials(config.gnip.username, config.gnip.password));
+        httpClient = HttpClientBuilder.create().setDefaultCredentialsProvider(credentialsProvider).build();
     }
 
     /**
@@ -324,15 +359,17 @@ public class HistoricsReader {
      */
     private String fetchJobStatusFromGNIP(final String jobId) {
         try {
-            String json = Request.Get(
+            HttpGet statusRequest = new HttpGet(
                     getUri("accounts/" + config.gnip.accountName
                                     + "/publishers/twitter/historical/track/jobs/"
                                     + jobId
                                     + ".json"
                     )
-            ).execute().returnContent().asString();
+            );
+            HttpResponse response = httpClient.execute(statusRequest);
+            String responseStr = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
 
-            JSONObject obj = new JSONObject(json);
+            JSONObject obj = new JSONObject(responseStr);
             String status = obj.getString("status");
             log.info("Read status from GNIP: " + status + " for job " + jobId);
             return status;
@@ -375,14 +412,17 @@ public class HistoricsReader {
      */
     private void updateGNIPURLs(final String jobId) {
         try {
-            String json = Request.Get(
+            HttpGet statusRequest = new HttpGet(
                     getUri("accounts/" + config.gnip.accountName
-                            + "/publishers/twitter/historical/track/jobs/"
-                            + jobId
-                            + "/results.json"
+                                    + "/publishers/twitter/historical/track/jobs/"
+                                    + jobId
+                                    + "/results.json"
                     )
-            ).execute().returnContent().asString();
-            JSONObject obj = new JSONObject(json);
+            );
+            HttpResponse response = httpClient.execute(statusRequest);
+            String responseStr = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
+
+            JSONObject obj = new JSONObject(responseStr);
             String suspectMinutesURL = obj.getString("suspectMinutesUrl");
             String urls = obj.getJSONArray("urlList").toString();
 
@@ -509,10 +549,17 @@ public class HistoricsReader {
      */
     private String downloadFile(final String url) {
         try {
+            String authString = config.gnip.username + ":" + config.gnip.password;
+            byte[] authEncBytes = Base64.encodeBase64(authString.getBytes());
+            String authStringEnc = new String(authEncBytes);
+
             URL website = new URL(url);
             String path = "/tmp" + website.getFile();
+            URLConnection websiteConn = website.openConnection();
+            websiteConn.setRequestProperty("Authorization", "Basic " + authStringEnc);
+
             log.info("Downloading file to " + path);
-            ReadableByteChannel rbc = Channels.newChannel(website.openStream());
+            ReadableByteChannel rbc = Channels.newChannel(websiteConn.getInputStream());
             FileOutputStream fos = new FileOutputStream(path);
             fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
             log.info("File downloaded to: " + path);
