@@ -45,7 +45,7 @@ After launching an instance, you'll next need to configure it:
 - SSH into the instance. `ssh -i [PEM] root@[EC2-INSTANCE]`
 - `sudo vi /etc/datasift/gnip-reader/reader.json` and add your Gnip credentials.
 - `sudo vi /etc/datasift/datasift-writer/writer.json` and add your DataSift credentials.
-- `sudo vi /etc/datasift/historics-reader/reader.json` and add your Gnip account name.
+- `sudo vi /etc/datasift/historics-reader/reader.json` and add your Gnip account name and credentials.
 - `sudo supervisorctl restart gnip-reader`
 - `sudo supervisorctl restart datasift-writer`
 - `exit`
@@ -73,7 +73,7 @@ After launching an instance, you'll next need to configure it:
 - SSH into the instance. eg. `vagrant ssh`
 - `sudo vi /etc/datasift/gnip-reader/reader.json` and add your Gnip credentials.
 - `sudo vi /etc/datasift/datasift-writer/writer.json` and add your DataSift credentials.
-- `sudo vi /etc/datasift/historics-reader/reader.json` and add your Gnip account name.
+- `sudo vi /etc/datasift/historics-reader/reader.json` and add your Gnip account name and credentials.
 - `sudo supervisorctl restart gnip-reader`
 - `sudo supervisorctl restart datasift-writer`
 - `exit`
@@ -264,7 +264,9 @@ Example:
   "gnip": {
     "base_url": "https://historical.gnip.com",
     "port": 443,
-    "account_name": "gnip-account"
+    "account_name": "gnip-account",
+    "username": "user",
+    "password": "password"
   },
   "kafka": {
     "topic": "twitter",

@@ -175,7 +175,6 @@ describe 'twitterapi-reader::default' do
 
 end
 
-
 =begin
 describe 'historics-reader::default' do
 
@@ -194,7 +193,6 @@ describe 'historics-reader::default' do
 
 end
 =end
-
 
 describe 'historics-api::default' do
 

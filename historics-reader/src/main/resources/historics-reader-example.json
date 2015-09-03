@@ -5,7 +5,9 @@
   "gnip": {
     "base_url": "http://localhost",
     "port": 5001,
-    "account_name": "delivered"
+    "account_name": "delivered",
+    "username": "USER",
+    "password": "PASSWORD"
   },
   "kafka": {
     "topic": "twitter",
