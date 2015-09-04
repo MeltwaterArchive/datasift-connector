@@ -17,6 +17,22 @@ To deploy the Connector or to work with it locally, you'll first need to clone t
 
 Please note that the Connector has been developed and tested within CentOS 6.5. The source AMI in use by our ami.json packer configuration is [ami-c2a818aa](https://aws.amazon.com/marketplace/pp/B00NQAYLWO/ref=rev_all_product_title). The Connector is not guaranteed to operate correctly when deployed using alternative source images.
 
+### AWS Region
+
+The Packer configuration file by default uses the US East region of AWS. If another region is required then the configuration file (eg. ami.json) must be changed. First change the property "region" in the configuration file to your required region code (see table below). The "source_ami" property must also be changed to the corresponding source AMI according to the table below.
+
+| Region Name               | Region Code    | Source AMI   |
+| ------------------------- | ---------------| ------------ |
+| US East (N. Virginia)     | us-east-1      | ami-c2a818aa |
+| US West (Oregon)          | us-west-2      | ami-81d092b1 |
+| US West (N. California)   | us-west-1      | ami-57cfc412 |
+| EU (Frankfurt)            | eu-west-1      | ami-46c4f65b |
+| EU (Ireland)              | eu-central-1   | ami-30ff5c47 |
+| Asia Pacific (Singapore)  | ap-southeast-1 | ami-b4a582e6 |
+| Asia Pacific (Sydney)     | ap-southeast-1 | ami-b3523089 |
+| Asia Pacific (Tokyo)      | ap-northeast-1 | ami-13614b12 |
+| South America (Sao Paulo) | sa-east-1      | ami-9b952086 |
+
 ### Pricing
 
 The CentOS 6 source AMI used by the Connector is a free product. The EC2 instance type used by default to build the Connector AMI is t2.small, as a t2.micro type may encounter Chef memory limitations. This is NOT a "Free Tier Eligible" instance type, and will incur charges each time a Connector AMI is built. These charges should be minimal. Existing customers can view estimated costs for various tiers by logging-in to AWS, visiting the [AMI product page](https://aws.amazon.com/marketplace/pp/B00NQAYLWO) and clicking the "Continue" button.
