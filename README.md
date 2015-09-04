@@ -33,7 +33,8 @@ The Packer configuration file by default uses the US East region of AWS. If anot
 | Asia Pacific (Tokyo)      | ap-northeast-1 | ami-13614b12 |
 | South America (Sao Paulo) | sa-east-1      | ami-9b952086 |
 
-Last updated 4th September 2015
+Last updated 4th September 2015.
+See [here](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region) for latest AWS regions.
 
 ### Pricing
 
