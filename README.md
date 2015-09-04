@@ -33,6 +33,8 @@ The Packer configuration file by default uses the US East region of AWS. If anot
 | Asia Pacific (Tokyo)      | ap-northeast-1 | ami-13614b12 |
 | South America (Sao Paulo) | sa-east-1      | ami-9b952086 |
 
+Last updated 4th September 2015
+
 ### Pricing
 
 The CentOS 6 source AMI used by the Connector is a free product. The EC2 instance type used by default to build the Connector AMI is t2.small, as a t2.micro type may encounter Chef memory limitations. This is NOT a "Free Tier Eligible" instance type, and will incur charges each time a Connector AMI is built. These charges should be minimal. Existing customers can view estimated costs for various tiers by logging-in to AWS, visiting the [AMI product page](https://aws.amazon.com/marketplace/pp/B00NQAYLWO) and clicking the "Continue" button.
