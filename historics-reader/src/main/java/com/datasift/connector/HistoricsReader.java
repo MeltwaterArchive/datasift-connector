@@ -47,6 +47,7 @@ import java.sql.Statement;
 import java.util.Properties;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
+import org.apache.commons.codec.binary.Base64;
 
 /**
  *
@@ -324,13 +325,16 @@ public class HistoricsReader {
      */
     private String fetchJobStatusFromGNIP(final String jobId) {
         try {
+            Base64 b = new Base64();
+            String auth = new String(config.gnip.userName + ":" + config.gnip.password);
+            String encoded = b.encodeAsString(auth.getBytes());
             String json = Request.Get(
                     getUri("accounts/" + config.gnip.accountName
                                     + "/publishers/twitter/historical/track/jobs/"
                                     + jobId
                                     + ".json"
                     )
-            ).execute().returnContent().asString();
+            ).addHeader("Authorization", "Basic " + encoded).execute().returnContent().asString();
 
             JSONObject obj = new JSONObject(json);
             String status = obj.getString("status");
@@ -375,24 +379,31 @@ public class HistoricsReader {
      */
     private void updateGNIPURLs(final String jobId) {
         try {
+            Base64 b = new Base64();
+            String auth = new String(config.gnip.userName + ":" + config.gnip.password);
+            String encoded = b.encodeAsString(auth.getBytes());
             String json = Request.Get(
                     getUri("accounts/" + config.gnip.accountName
                             + "/publishers/twitter/historical/track/jobs/"
                             + jobId
                             + "/results.json"
                     )
-            ).execute().returnContent().asString();
+            ).addHeader("Authorization", "Basic " + encoded).execute().returnContent().asString();
             JSONObject obj = new JSONObject(json);
-            String suspectMinutesURL = obj.getString("suspectMinutesUrl");
+            String suspectMinutesURL = null;
+            if (obj.has("suspectMinutesUrl")) {
+                 suspectMinutesURL = obj.getString("suspectMinutesUrl");
+            }
             String urls = obj.getJSONArray("urlList").toString();
 
             String connStr = "jdbc:sqlite:" + config.database.filepath;
             log.info("Connecting to sqlite DB using string: " + connStr);
             dbConn = DriverManager.getConnection(connStr);
-
-            Statement setSuspectMinutesStmt = dbConn.createStatement();
-            setSuspectMinutesStmt.executeUpdate(
+            if (suspectMinutesURL != null) {
+                Statement setSuspectMinutesStmt = dbConn.createStatement();
+                setSuspectMinutesStmt.executeUpdate(
                     "UPDATE jobs SET suspect_minutes_url='" + suspectMinutesURL + "' WHERE id='" + jobId + "'");
+            }
             Statement setUrlsStmt = dbConn.createStatement();
             setUrlsStmt.executeUpdate(
                     "UPDATE jobs SET urls='" + urls + "' WHERE id='" + jobId + "'");
@@ -458,7 +469,6 @@ public class HistoricsReader {
             InputStream gzipStream = new GZIPInputStream(fileStream);
             Reader decoder = new InputStreamReader(gzipStream, "UTF-8");
             BufferedReader buffered = new BufferedReader(decoder);
-
             log.info("Reading lines from file " + filePath);
             String line = buffered.readLine().trim();
             while (line != null) {
@@ -510,8 +520,11 @@ public class HistoricsReader {
     private String downloadFile(final String url) {
         try {
             URL website = new URL(url);
-            String path = "/tmp" + website.getFile();
+            String path = "/tmp" + website.getPath();
             log.info("Downloading file to " + path);
+            String lDir = path.substring(0, path.lastIndexOf("/"));
+            File thePath = new File(lDir);
+            thePath.mkdirs();
             ReadableByteChannel rbc = Channels.newChannel(website.openStream());
             FileOutputStream fos = new FileOutputStream(path);
             fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);

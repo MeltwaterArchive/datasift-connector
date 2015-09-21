@@ -64,5 +64,5 @@ cron_d 'historics-reader-cron' do
           '/usr/lib/datasift/historics-reader/*" '\
           'com.datasift.connector.HistoricsReader '\
           '/etc/datasift/historics-reader/reader.json'
-  user    'historicsreader'
+  user    'historicsapi'
 end

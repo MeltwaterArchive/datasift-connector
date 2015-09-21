@@ -29,4 +29,19 @@ public class GnipConfig {
     @NotNull
     @JsonProperty("account_name")
     public String accountName;
+
+    /**
+     *
+     */
+    @NotNull
+    @JsonProperty("user_name")
+    public String userName;
+
+    /**
+     *
+     */
+    @NotNull
+    @JsonProperty("password")
+    public String password;
+
 }
