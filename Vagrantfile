@@ -23,6 +23,7 @@ Vagrant.configure(2) do |config|
   config.vm.provision :chef_zero do |chef|
     #chef.cookbooks_path = ["chef/cookbooks"]
     chef.roles_path = "chef/roles"
+    chef.nodes_path = "chef/nodes"
     chef.data_bags_path = "chef/data_bags"
     chef.provisioning_path = "/tmp/vagrant-chef"
 

@@ -20,3 +20,4 @@ cookbook 'influxdb',
          ref: '232e2afd4afb29b6eecb3369de84f1674272cd59'
 cookbook 'cron', '~> 1.6.1'
 cookbook 'nodejs', '~> 2.4.0'
+cookbook 'nginx', '~> 2.7.6'
