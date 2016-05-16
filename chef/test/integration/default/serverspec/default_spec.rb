@@ -118,7 +118,7 @@ describe 'datasift-writer::default' do
   end
 
   describe command('yum info datasift-writer | '\
-                   "grep \"Repo        : installed\"") do
+                   'grep \"Repo        : installed\"') do
     its(:exit_status) { should eq 0 }
   end
 
@@ -145,7 +145,7 @@ describe 'gnip-reader::default' do
   end
 
   describe command('yum info gnip-reader | '\
-                   "grep \"Repo        : installed\"") do
+                   'grep \"Repo        : installed\"') do
     its(:exit_status) { should eq 0 }
   end
 
