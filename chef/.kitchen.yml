@@ -1,45 +1,46 @@
----
 driver:
   name: docker
   use_sudo: false
   forward:
-    - 8080:80 # Nginx
-    - 8443:443 # Nginx
-    - 2003 # Graphite
-    - 3000 # Grafana
-    - 8083 # InfluxDB
-    - 8086 # InfluxDB
-    - 8090 # InfluxDB
-    - 8125 # StatsD
-    - 8888 # Historics API
-
+    - '8080:80'
+    - '8443:443'
+    - 2003
+    - 3000
+    - 8083
+    - 8086
+    - 8090
+    - 8125
+    - 8888
 provisioner:
   name: chef_zero
-
+  client_rb:
+    audit_mode: MICHAEL_FOO
 platforms:
-  - name: centos-6.5
-
+  -
+    name: centos-6.5
 suites:
-  - name: default
-
+  -
+    name: default
     run_list:
-      - recipe[java_se]
-      - recipe[supervisor]
-      - recipe[datasift-stats]
-      - recipe[datasift-kafka]
-      - recipe[webapp]
-      - recipe[datasift-writer]
-      - recipe[gnip-reader]
-      - recipe[historics-api]
-      #- recipe[historics-reader]
+      - 'recipe[java_se]'
+      - 'recipe[supervisor]'
+      - 'recipe[datasift-stats]'
+      - 'recipe[datasift-kafka]'
+      - 'recipe[webapp]'
+      - 'recipe[datasift-writer]'
+      - 'recipe[gnip-reader]'
+      - 'recipe[historics-api]'
     attributes:
       kafka:
         ulimit_file: 128000
         broker:
-          log_dirs: ['/mnt']
-          zookeeper_connect: ['localhost:2181']
+          log_dirs:
+            - /mnt
+          zookeeper_connect:
+            - 'localhost:2181'
           zookeeper_connection_timeout_ms: 15000
       packaging:
-        ds_build_gocd: {enabled: true}
+        ds_build_gocd:
+          enabled: true
       influxdb:
-        source: https://s3.amazonaws.com/influxdb/influxdb-0.8.8-1.x86_64.rpm
+        source: 'https://s3.amazonaws.com/influxdb/influxdb-0.8.8-1.x86_64.rpm'

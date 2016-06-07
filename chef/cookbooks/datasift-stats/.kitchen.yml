@@ -1,16 +1,17 @@
----
 driver:
   name: vagrant
-
 provisioner:
   name: chef_zero
-
+  client_rb:
+    audit_mode: MICHAEL_FOO
 platforms:
-  - name: ubuntu-12.04
-  - name: centos-6.5
-
+  -
+    name: ubuntu-12.04
+  -
+    name: centos-6.5
 suites:
-  - name: default
+  -
+    name: default
     run_list:
-      - recipe[datasift-influxdb::default]
-    attributes:
+      - 'recipe[datasift-influxdb::default]'
+    attributes: null
