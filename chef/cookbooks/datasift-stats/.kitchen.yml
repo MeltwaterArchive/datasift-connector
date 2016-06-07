@@ -3,7 +3,7 @@ driver:
 provisioner:
   name: chef_zero
   client_rb:
-    audit_mode: MICHAEL_FOO
+    audit_mode: :enabled
 platforms:
   -
     name: ubuntu-12.04
