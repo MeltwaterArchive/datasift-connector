@@ -390,13 +390,15 @@ public class HistoricsReader {
             log.info("Connecting to sqlite DB using string: " + connStr);
             dbConn = DriverManager.getConnection(connStr);
 
-            Statement setSuspectMinutesStmt = dbConn.createStatement();
-            setSuspectMinutesStmt.executeUpdate(
-                    "UPDATE jobs SET suspect_minutes_url='" + suspectMinutesURL + "' WHERE id='" + jobId + "'");
+            if (suspectMinutesURL != null) {
+                Statement setSuspectMinutesStmt = dbConn.createStatement();
+                setSuspectMinutesStmt.executeUpdate(
+                        "UPDATE jobs SET suspect_minutes_url='" + suspectMinutesURL + "' WHERE id='" + jobId + "'");
+            }
+
             Statement setUrlsStmt = dbConn.createStatement();
             setUrlsStmt.executeUpdate(
                     "UPDATE jobs SET urls='" + urls + "' WHERE id='" + jobId + "'");
-
         } catch (Exception e) {
             log.error("Error updating result URLs from GNIP for job " + jobId + ": " + e.getMessage());
             e.printStackTrace();
