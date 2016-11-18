@@ -44,5 +44,5 @@ public class GnipConfig {
      * The endpoint of the Gnip stream.
      */
     @NotNull
-    public String host = Constants.ENTERPRISE_STREAM_HOST;
+    public String host = Constants.ENTERPRISE_STREAM_HOST_v2;
 }
