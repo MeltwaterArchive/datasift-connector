@@ -63,7 +63,7 @@ public class TestGnipReader {
         this.client = mock(BasicClient.class);
         this.cb = mock(ClientBuilder.class);
         when(cb.name("Gnip Reader")).thenReturn(cb);
-        when(cb.hosts(Constants.ENTERPRISE_STREAM_HOST)).thenReturn(cb);
+        when(cb.hosts(Constants.ENTERPRISE_STREAM_HOST_v2)).thenReturn(cb);
         when(cb.endpoint(any(StreamingEndpoint.class))).thenReturn(cb);
         when(cb.authentication(any(Authentication.class))).thenReturn(cb);
         when(cb.processor(any(HosebirdMessageProcessor.class))).thenReturn(cb);
@@ -146,11 +146,11 @@ public class TestGnipReader {
         LinkedBlockingQueue<String> lbq = new LinkedBlockingQueue<>(10);
         tr.getHosebirdClient(lbq, config);
         verify(cb).name("Gnip Reader");
-        verify(cb).hosts(Constants.ENTERPRISE_STREAM_HOST);
+        verify(cb).hosts(Constants.ENTERPRISE_STREAM_HOST_v2);
 
         ArgumentCaptor<StreamingEndpoint> se = ArgumentCaptor.forClass(StreamingEndpoint.class);
         verify(cb).endpoint(se.capture());
-        assertEquals("/accounts/ACCOUNT/publishers/twitter/streams/PRODUCT/LABEL.json", se.getValue().getURI());
+        assertEquals("/stream/PRODUCT/accounts/ACCOUNT/publishers/twitter/LABEL.json", se.getValue().getURI());
 
         // Unfortunately there's not a good way of asserting that the Authentication and Processor have
         // been created with the correct parameters.

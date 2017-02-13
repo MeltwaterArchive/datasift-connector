@@ -10,6 +10,6 @@ public class TestGnipConfig {
     @Test
     public void should_set_defaults_on_construction() {
         GnipConfig tc = new GnipConfig();
-        assertEquals(Constants.ENTERPRISE_STREAM_HOST, tc.host);
+        assertEquals(Constants.ENTERPRISE_STREAM_HOST_v2, tc.host);
     }
 }

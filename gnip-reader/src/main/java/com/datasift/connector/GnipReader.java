@@ -4,7 +4,7 @@ import com.datasift.connector.reader.config.Config;
 import com.datasift.connector.reader.config.GnipReaderConfig;
 import com.datasift.connector.reader.config.GnipConfig;
 import com.twitter.hbc.core.Client;
-import com.twitter.hbc.core.endpoint.RealTimeEnterpriseStreamingEndpoint;
+import com.twitter.hbc.core.endpoint.RealTimeEnterpriseStreamingEndpoint_v2;
 import com.twitter.hbc.core.processor.LineStringProcessor;
 import com.twitter.hbc.httpclient.auth.BasicAuth;
 import org.slf4j.Logger;
@@ -68,8 +68,8 @@ public class GnipReader extends HosebirdReader {
 
         GnipConfig config = ((GnipReaderConfig) readerConfig).gnip;
 
-        RealTimeEnterpriseStreamingEndpoint endpoint =
-                new RealTimeEnterpriseStreamingEndpoint(
+        RealTimeEnterpriseStreamingEndpoint_v2 endpoint =
+                new RealTimeEnterpriseStreamingEndpoint_v2(
                         config.account,
                         config.product,
                         config.label);
