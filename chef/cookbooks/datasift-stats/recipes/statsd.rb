@@ -18,14 +18,14 @@ end
 directory node['statsd']['config_dir'] do
   owner node['statsd']['user']
   group node['statsd']['group']
-  mode 0755
+  mode '0755'
 end
 
 template "#{node['statsd']['config_dir']}/config.js" do
   source 'config.js.erb'
   owner node['statsd']['user']
   group node['statsd']['group']
-  mode 0644
+  mode '0644'
 
   config_hash = {
     graphitePort: node['statsd']['graphite_port'],

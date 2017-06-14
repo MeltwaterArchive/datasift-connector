@@ -82,8 +82,7 @@ describe 'datasift-kafka::default' do
 
   describe file('/opt/kafka/config/server.properties') do
     its(:content) do
-      should match( \
-        /kafka.metrics.reporters=com.airbnb.kafka.KafkaStatsdMetricsReporter/)
+      should match(/kafka.metrics.reporters=com.airbnb.kafka.KafkaStatsdMetricsReporter/)
     end
     its(:content) do
       should match(/external.kafka.statsd.reporter.enabled=true/)

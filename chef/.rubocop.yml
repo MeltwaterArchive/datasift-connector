@@ -1,4 +1,23 @@
 ---
+Metrics/LineLength:
+  Max: 140
+
+# This is disabled until the version of Rubocop in use supports ExcludedMethods,
+# though still may not be very useful on Chef code.
+Metrics/BlockLength:
+  Enabled: false
+
+# Ruby 3.x will introduce frozen strings as the default, and uses a magic
+# comment to enabled this behaviour on Ruby 2.x.
+# https://bugs.ruby-lang.org/issues/8976
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+# This is broken in rubocop 0.46.0.
+# https://github.com/bbatsov/rubocop/issues/3709
+Style/GuardClause:
+  Enabled: false
+
 Style/Encoding:
   Enabled: false
 

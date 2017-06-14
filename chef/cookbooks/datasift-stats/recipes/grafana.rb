@@ -17,7 +17,7 @@ template '/etc/grafana/grafana-datasift.ini' do
   source 'grafana.ini.erb'
   owner 'grafana'
   group 'grafana'
-  mode 0644
+  mode '0644'
 end
 
 env = { 'HOME' => '/usr/share/grafana' }
