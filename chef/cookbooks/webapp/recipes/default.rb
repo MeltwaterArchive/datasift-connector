@@ -13,7 +13,7 @@ end
 template '/etc/nginx/nginx_datasift.conf' do
   user 'root'
   group 'root'
-  mode 0644
+  mode 0o644
   source 'nginx.conf.erb'
 end
 
