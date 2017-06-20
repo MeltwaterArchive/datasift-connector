@@ -3,7 +3,7 @@ package com.datasift.connector.reader.config;
 import javax.validation.constraints.NotNull;
 
 /**
- * Holds & provides access to configuration properties
+ * Holds and provides access to configuration properties
  * for the Gnip Reader service.
  */
 @SuppressWarnings("checkstyle:visibilitymodifier")

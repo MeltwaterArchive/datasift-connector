@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.constraints.NotNull;
 
 /**
- * Holds & provides access to output stream configuration options.
+ * Holds and provides access to output stream configuration options.
  */
 @SuppressWarnings("checkstyle:visibilitymodifier")
 public class DataSiftConfig {

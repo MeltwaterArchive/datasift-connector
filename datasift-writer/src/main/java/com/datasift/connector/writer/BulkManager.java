@@ -135,7 +135,7 @@ public class BulkManager implements Runnable {
     /**
      * Parses DataSift configuration and sets up connection parameters.
      * @return the URI for the ingestion endpoint
-     * @throws URISyntaxException on issues constructing URI from base URL & port
+     * @throws URISyntaxException on issues constructing URI from base URL and port
      */
     @VisibleForTesting
     @SuppressWarnings("checkstyle:designforextension")

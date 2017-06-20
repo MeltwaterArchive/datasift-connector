@@ -181,7 +181,7 @@ public class SimpleConsumerManager implements ConsumerManager {
 
     /**
      * Main constructor.
-     * @param config configuration object containing Kafka & ZK specific properties
+     * @param config configuration object containing Kafka and ZK specific properties
      * @param metrics Shared metrics object to report to
      */
     public SimpleConsumerManager(final Config config, final Metrics metrics) {
@@ -391,7 +391,7 @@ public class SimpleConsumerManager implements ConsumerManager {
     }
 
     /**
-     * Gathers leader & partition information for topic.
+     * Gathers leader and partition information for topic.
      * Sets up client ID.
      * Assigns initial read offset for consumer.
      * @param waitForConnection dictates whether execution waits for valid Kafka connection to proceed

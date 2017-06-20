@@ -3,7 +3,7 @@ package com.datasift.connector.writer.config;
 import javax.validation.constraints.NotNull;
 
 /**
- * Holds & provides access to configuration properties
+ * Holds and provides access to configuration properties
  * for the DataSift Writer service.
  */
 @SuppressWarnings("checkstyle:visibilitymodifier")

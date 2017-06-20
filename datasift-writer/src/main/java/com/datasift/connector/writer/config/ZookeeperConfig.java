@@ -1,7 +1,7 @@
 package com.datasift.connector.writer.config;
 
 /**
- * Holds & provides access to Zookeeper specific configuration options.
+ * Holds and provides access to Zookeeper specific configuration options.
  */
 @SuppressWarnings("checkstyle:visibilitymodifier")
 public class ZookeeperConfig {

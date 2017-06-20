@@ -6,7 +6,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 /**
- * Holds & provides access to Kafka specific configuration options.
+ * Holds and provides access to Kafka specific configuration options.
  */
 @SuppressWarnings("checkstyle:visibilitymodifier")
 public class KafkaConfig {
