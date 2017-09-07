@@ -13,7 +13,7 @@ Vagrant.configure(2) do |config|
   config.vm.network "forwarded_port", guest: 8086, host: 8086
   config.vm.network "forwarded_port", guest: 8888, host: 8888
 
-  config.omnibus.chef_version = :latest
+  config.omnibus.chef_version = '12.17.44'
 
   config.berkshelf.berksfile_path = "chef/Berksfile"
   config.berkshelf.enabled = true
