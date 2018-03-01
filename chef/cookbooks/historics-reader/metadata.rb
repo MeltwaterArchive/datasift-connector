@@ -6,6 +6,6 @@ description      'Installs/Configures historics-reader'
 long_description 'Installs/Configures historics-reader'
 version          '0.1.0'
 
-depends 'supervisor', '= 0.4.12'
+depends 'supervisor', '= 0.5.0'
 depends 'java_se', '~> 8.131.0'
 depends 'cron', '~> 1.6.1'

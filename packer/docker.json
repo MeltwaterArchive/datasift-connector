@@ -21,6 +21,7 @@
       "execute_command": "{{if .Sudo}}sudo {{end}}chef-solo -E {{user `environment`}} --no-color -c {{.ConfigPath}} -j /tmp/datasift-connector.json",
       "cookbook_paths": ["{{pwd}}/../chef/vendor/cookbooks"],
       "environments_path": "{{pwd}}/../chef/environments",
+      "version": 12,
       "run_list": [
         "recipe[java_se]",
         "recipe[supervisor]",

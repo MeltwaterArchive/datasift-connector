@@ -6,5 +6,5 @@ description      'Installs/Configures historics api components'
 long_description 'Installs/Configures historics api components'
 version          '0.1.0'
 
-depends 'supervisor', '= 0.4.12'
+depends 'supervisor', '= 0.5.0'
 depends 'nodejs', '~> 2.4.0'

@@ -6,5 +6,5 @@ description      'Installs/Configures gnip-reader'
 long_description 'Installs/Configures gnip-reader'
 version          '0.1.0'
 
-depends 'supervisor', '= 0.4.12'
+depends 'supervisor', '= 0.5.0'
 depends 'java_se', '~> 8.131.0'
